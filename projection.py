@@ -19,21 +19,34 @@ def point(X, Y, Z):
 
 seglen = 5
 roadw = 800
+cameraX = 0
 cameraZ = 0
 events = Inputs()
 
-canvas.create_polygon(
-    [
-        point(-100, -100, 0),
-        point(100, -100, 0),
-        point(100, 100, 100),
-        point(-100, 100, 100)
-    ],
-    fill = "gray"
-)
-
 def update():
-    print(inputs)
+
+    global cameraX, cameraZ
+    canvas.delete("test")
+
+    if((binds["forward"], "press") in inputs["keys"]):
+        cameraZ += 1
+    if((binds["back"], "press") in inputs["keys"]):
+        cameraZ -= 1
+    if((binds["right"], "press") in inputs["keys"]):
+        cameraX += 10
+    if((binds["left"], "press") in inputs["keys"]):
+        cameraX -= 10
+
+    canvas.create_polygon(
+    [
+        point(-100 + cameraX, -100,  0 - cameraZ),
+        point( 100 + cameraX, -100,  0 - cameraZ),
+        point( 100 + cameraX,  100, 25 - cameraZ),
+        point(-100 + cameraX,  100, 25 - cameraZ)
+    ],
+    fill = "gray",
+    tag = "test"
+)
     events.update()
     canvas.after(20, update)
 
