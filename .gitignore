@@ -1,0 +1,6 @@
+# Ignore PyCache files (compiled objects)
+__pycache__/
+*.py[cod]
+
+# Ignore VSCode Folder
+.vscode/
