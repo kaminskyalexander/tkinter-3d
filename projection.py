@@ -33,20 +33,21 @@ def update():
     if((binds["back"], "press") in inputs["keys"]):
         cameraZ -= 1
     if((binds["right"], "press") in inputs["keys"]):
-        cameraX += 10
+        cameraX += 20
     if((binds["left"], "press") in inputs["keys"]):
-        cameraX -= 10
+        cameraX -= 20
 
-    canvas.create_polygon(
-    [
-        point(-100 + cameraX, -100,  0 - cameraZ),
-        point( 100 + cameraX, -100,  0 - cameraZ),
-        point( 100 + cameraX,  100, 25 - cameraZ),
-        point(-100 + cameraX,  100, 25 - cameraZ)
-    ],
-    fill = "gray",
-    tag = "test"
-)
+    for i in range(25):
+        canvas.create_polygon(
+        [
+            point(-roadw/2 - cameraX, -100, seglen * (i    ) - cameraZ),
+            point( roadw/2 - cameraX, -100, seglen * (i    ) - cameraZ),
+            point( roadw/2 - cameraX, -100, seglen * (i + 1) - cameraZ),
+            point(-roadw/2 - cameraX, -100, seglen * (i + 1) - cameraZ)
+        ],
+        fill = ("gray") if i%2 else ("darkgray"),
+        tag = "test"
+    )
     events.update()
     canvas.after(20, update)
 
