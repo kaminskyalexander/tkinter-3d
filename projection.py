@@ -1,55 +1,47 @@
 from setup import *
 from inputs import *
 
-def point(X, Y, Z):
-    Y *= -1
-    if(Z):
-        if(Z < 0):
-            Z = abs(Z/10) + 1
-            x = X*Z + width/2
-            y = Y*Z + height/2
-        elif(Z > 0):
-            Z = (Z/10) + 1
-            x = X/Z + width/2
-            y = Y/Z + height/2
-    else:
-        x = X + width/2
-        y = Y + height/2
-    return x, y
+# TODO: Fix for negative values
+# This also flips the y value when converting from 3d to 2d space.
+def flatten(x, y, z):
+	y *= -1
+	return x/z, y/z
 
-seglen = 5
-roadw = 800
-cameraX = 0
-cameraZ = 0
+# We should move this function later, **not to setup**.
+def pointToPixel(point):
+
+	# Get the size of the window
+	root.update()
+	width = canvas.winfo_width()
+	height = canvas.winfo_height()
+
+	# Get the coordinates in pixels based on the window width and height
+	# This should let the window be stretchable
+	x = (width/2)  + (width/2)  * point[0]
+	y = (height/2) + (height/2) * point[1]
+
+	return x, y
+
 events = Inputs()
 
+print(flatten(5, 5, 1))
+
 def update():
+	canvas.delete("frame")
 
-    global cameraX, cameraZ
-    canvas.delete("test")
+	x = canvas.create_polygon(
+		pointToPixel(flatten(-0.5, -0.5, 1)),
+		pointToPixel(flatten( 0.5, -0.5, 1)),
+		pointToPixel(flatten( 0.5, -0.5, 2)),
+		pointToPixel(flatten(-0.5, -0.5, 2)),
+		fill = "gray",
+		outline = "#0f0",
+		width = 3,
+		tag = "frame"
+	)
 
-    if((binds["forward"], "press") in inputs["keys"]):
-        cameraZ += 1
-    if((binds["back"], "press") in inputs["keys"]):
-        cameraZ -= 1
-    if((binds["right"], "press") in inputs["keys"]):
-        cameraX += 20
-    if((binds["left"], "press") in inputs["keys"]):
-        cameraX -= 20
-
-    for i in range(25):
-        canvas.create_polygon(
-        [
-            point(-roadw/2 - cameraX, -100, seglen * (i    ) - cameraZ),
-            point( roadw/2 - cameraX, -100, seglen * (i    ) - cameraZ),
-            point( roadw/2 - cameraX, -100, seglen * (i + 1) - cameraZ),
-            point(-roadw/2 - cameraX, -100, seglen * (i + 1) - cameraZ)
-        ],
-        fill = ("gray") if i%2 else ("darkgray"),
-        tag = "test"
-    )
-    events.update()
-    canvas.after(20, update)
+	events.update()
+	canvas.after(20, update)
 
 update()
 tk.mainloop()

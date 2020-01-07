@@ -6,7 +6,7 @@ canvas = tk.Canvas(
     root,
     width = width,
     height = height,
-    bg = "#25bed9",
+    bg = "#000",
     highlightthickness = 0
 )
 canvas.pack()

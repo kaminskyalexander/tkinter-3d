@@ -14,7 +14,3 @@ def intersection(a, b, c, d, x1, y1, z1, x2, y2, z2):
 
 	return x, y, z
 
-# x - z = 0
-# p1 = (-3,  5,  7)
-# p2 = ( 6,  2,  3)
-print(intersection(1, 0, 0, 0, -3, 5, 7, 6, 2, 3))
