@@ -11,7 +11,7 @@ def flatten(x, y, z):
 def pointToPixel(point):
 
 	# Get the size of the window
-	root.update()
+	# root.update()
 	width = canvas.winfo_width()
 	height = canvas.winfo_height()
 
@@ -27,8 +27,12 @@ events = Inputs()
 print(flatten(5, 5, 1))
 
 def update():
-	canvas.delete("frame")
 
+	print(inputs["keys"])
+	if((binds["forward"], "pressed") in inputs["keys"]):
+		print("hi")
+
+	canvas.delete("frame")
 	x = canvas.create_polygon(
 		pointToPixel(flatten(-0.5, -0.5, 1)),
 		pointToPixel(flatten( 0.5, -0.5, 1)),

@@ -9,7 +9,7 @@ canvas = tk.Canvas(
     bg = "#000",
     highlightthickness = 0
 )
-canvas.pack()
+canvas.pack(fill = "both", expand = True)
 
 binds = {
     "forward": 87,
