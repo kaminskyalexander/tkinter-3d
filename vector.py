@@ -24,3 +24,8 @@ class Vector:
 		self.x /= vector.x
 		self.y /= vector.y
 		self.z /= vector.z
+
+	def assign(self, vector):
+		self.x = vector.x
+		self.y = vector.y
+		self.z = vector.z
