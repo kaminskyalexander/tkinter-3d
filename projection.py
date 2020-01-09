@@ -1,48 +1,29 @@
 from setup import *
 from inputs import *
-
-# TODO: Fix for negative values
-# This also flips the y value when converting from 3d to 2d space.
-def flatten(x, y, z):
-	y *= -1
-	return x/z, y/z
-
-# We should move this function later, **not to setup**.
-def pointToPixel(point):
-
-	# Get the size of the window
-	# root.update()
-	width = canvas.winfo_width()
-	height = canvas.winfo_height()
-
-	# Get the coordinates in pixels based on the window width and height
-	# This should let the window be stretchable
-	x = (width/2)  + (width/2)  * point[0]
-	y = (height/2) + (height/2) * point[1]
-
-	return x, y
+from geometry import polygon
 
 events = Inputs()
 
-print(flatten(5, 5, 1))
-
 def update():
-
-	print(inputs["keys"])
-	if((binds["forward"], "pressed") in inputs["keys"]):
-		print("hi")
+	if((binds["forward"], "press") in inputs["keys"]):
+		camera.z += 0.05
+	if((binds["back"], "press") in inputs["keys"]):
+		camera.z -= 0.05
+	if((binds["right"], "press") in inputs["keys"]):
+		camera.x += 0.05
+	if((binds["left"], "press") in inputs["keys"]):
+		camera.x -= 0.05
 
 	canvas.delete("frame")
-	x = canvas.create_polygon(
-		pointToPixel(flatten(-0.5, -0.5, 1)),
-		pointToPixel(flatten( 0.5, -0.5, 1)),
-		pointToPixel(flatten( 0.5, -0.5, 2)),
-		pointToPixel(flatten(-0.5, -0.5, 2)),
-		fill = "gray",
-		outline = "#0f0",
-		width = 3,
-		tag = "frame"
-	)
+	for i in range(1, 100):
+		polygon(
+			Vector(-0.5, -0.5, i),
+			Vector( 0.5, -0.5, i),
+			Vector( 0.5, -0.5, i + 1),
+			Vector(-0.5, -0.5, i + 1),
+			fill = "gray" if i % 2 == 0 else "lightgray",
+			tag = "frame"
+		)
 
 	events.update()
 	canvas.after(20, update)
