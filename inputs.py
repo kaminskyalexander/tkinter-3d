@@ -35,12 +35,6 @@ class Inputs:
                 self.events.append(event)
             )
         )
-        root.bind(
-            "<Configure>",
-            lambda event: (
-                root.update()
-            )
-        )
 
     @staticmethod
     def apply(args):

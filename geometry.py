@@ -43,8 +43,8 @@ def polygon(*args, **kwargs):
 		v.y -= camera.y
 		v.z -= camera.z
 	newVerticies = []
-	cutoff = 0.1
-	renderDistance = 15
+	cutoff = 0.25
+	renderDistance = 14
 	onScreen = False
 	for v in args:
 		if(v.z < renderDistance):
@@ -66,7 +66,7 @@ def polygon(*args, **kwargs):
 
 				for neighbour in neighbours:
 					if(neighbour.z > cutoff):
-						interpoint = intersection(0, 0, 1, -0.1, args[i].x, args[i].y, args[i].z, neighbour.x, neighbour.y, neighbour.z)
+						interpoint = intersection(0, 0, 1, -cutoff, args[i].x, args[i].y, args[i].z, neighbour.x, neighbour.y, neighbour.z)
 						newVerticies.append(Vector(interpoint[0], interpoint[1], interpoint[2]))
 			else:
 				newVerticies.append(args[i])
