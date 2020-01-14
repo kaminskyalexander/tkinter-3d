@@ -1,5 +1,9 @@
 from setup import *
 
+def flip(vector):
+	x, y, z = vector.x*-1, vector.y*-1, vector.z*-1
+	return Vector(x, y, z)
+
 def intersection(a, b, c, d, x1, y1, z1, x2, y2, z2):
 
 	# Solve for T by using "Ax + By + Cz + D = 0" and subbing in the 

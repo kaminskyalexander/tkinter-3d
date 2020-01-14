@@ -1,22 +1,27 @@
 from setup import *
 from inputs import *
-from geometry import polygon
+from geometry import polygon, rotate, flip
 
 events = Inputs()
 debug = True
 
 def update():
+	movement = Vector(0, 0, 0)
 	if((binds["forward"], "press") in inputs["keys"]):
-		camera.z += 0.1
-		#makeshift fix :)
-		if(camera.z > 34):
-			camera.z = 0
+		movement.z += 0.1
 	if((binds["back"], "press") in inputs["keys"]):
-		camera.z -= 0.1
+		movement.z -= 0.1
 	if((binds["right"], "press") in inputs["keys"]):
 		rotation.y += 0.1
 	if((binds["left"], "press") in inputs["keys"]):
 		rotation.y -= 0.1
+
+	movement = rotate(movement, flip(rotation))
+	camera.add(movement)
+
+	#makeshift fix :)
+	if(camera.z > 34):
+		camera.z = 0
 
 	canvas.delete("frame")
 	# background
