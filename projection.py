@@ -8,13 +8,31 @@ debug = True
 def update():
 	movement = Vector(0, 0, 0)
 	if((binds["forward"], "press") in inputs["keys"]):
-		movement.z += 0.1
-	if((binds["back"], "press") in inputs["keys"]):
+		if((binds["speed"], "press") in inputs["keys"]):
+			movement.z += 0.3
+		else:
+			movement.z += 0.1
+	if((binds["backward"], "press") in inputs["keys"]):
 		movement.z -= 0.1
-	if((binds["right"], "press") in inputs["keys"]):
-		rotation.y += 0.1
-	if((binds["left"], "press") in inputs["keys"]):
+	if((binds["down"], "press") in inputs["keys"]):
+		movement.y -= 0.1
+	if((binds["up"], "press") in inputs["keys"]):
+		movement.y += 0.1
+	if((binds["look-left"], "press") in inputs["keys"]):
 		rotation.y -= 0.1
+	if((binds["look-right"], "press") in inputs["keys"]):
+		rotation.y += 0.1
+	if((binds["look-up"], "press") in inputs["keys"]):
+		rotation.x -= 0.1
+	if((binds["look-down"], "press") in inputs["keys"]):
+		rotation.x += 0.1
+	if((binds["tilt-left"], "press") in inputs["keys"]):
+		rotation.z += 0.1
+	if((binds["tilt-right"], "press") in inputs["keys"]):
+		rotation.z -= 0.1
+	if((binds["reset"], "press") in inputs["keys"]):
+		camera.assign(Vector(0, 0, 0))
+		rotation.assign(Vector(0, 0, 0))
 
 	movement = rotate(movement, flip(rotation))
 	camera.add(movement)

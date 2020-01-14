@@ -18,10 +18,21 @@ canvas = tk.Canvas(
 canvas.pack(fill = "both", expand = True)
 
 binds = {
+    # Movement.......
     "forward": 87,
-    "left": 65,
-    "back": 83,
-    "right": 68
+    "backward": 83,
+    "up": 32,
+    "down": 17,
+    "speed": 16,
+    # Camera.........
+    "look-left": 65,
+    "look-right": 68,
+    "look-up": 38,
+    "look-down": 40,
+    "tilt-left": 37,
+    "tilt-right": 39,
+    # Gameplay.......
+    "reset": 82
 }
 
 inputs = {
