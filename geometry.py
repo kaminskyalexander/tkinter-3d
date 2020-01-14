@@ -119,7 +119,8 @@ def polygon(*args, **kwargs):
 		if(newVerticies):
 			return canvas.create_polygon(
 				[pointToPixel(flatten(vertex)) for vertex in newVerticies],
-				kwargs
+				kwargs,
+				tag = "frame"
 			)
 	return None
 

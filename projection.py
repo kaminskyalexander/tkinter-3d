@@ -55,16 +55,14 @@ def update():
 			Vector(-0.45, -0.5, (i)/2),
 			Vector(-0.45, -0.5, (i+1)/2),
 			Vector(-0.65, -0.5, (i+1)/2),
-			fill = "darkred" if i % 2 == 0 else "#ddd",
-			tag = "frame"
+			fill = "darkred" if i % 2 == 0 else "#ddd"
 		)
 		polygon(
 			Vector( 0.45, -0.5, (i)/2),
 			Vector( 0.65, -0.5, (i)/2),
 			Vector( 0.65, -0.5, (i+1)/2),
 			Vector( 0.45, -0.5, (i+1)/2),
-			fill = "darkred" if i % 2 == 0 else "#ddd",
-			tag = "frame"
+			fill = "darkred" if i % 2 == 0 else "#ddd"
 		)
 	for i in range(0, 50):
 		polygon(
@@ -72,24 +70,21 @@ def update():
 			Vector( 0.5, -0.5, i),
 			Vector( 0.5, -0.5, i + 1),
 			Vector(-0.5, -0.5, i + 1),
-			fill = "#666" if i % 2 == 0 else "#555",
-			tag = "frame"
+			fill = "#666" if i % 2 == 0 else "#555"
 		)
 		polygon(
 			Vector(-0.6, -0.5, i),
 			Vector( -20, -0.5, i),
 			Vector( -20, -0.5, i + 1),
 			Vector(-0.6, -0.5, i + 1),
-			fill = "green" if i % 2 == 0 else "darkgreen",
-			tag = "frame"
+			fill = "green" if i % 2 == 0 else "darkgreen"
 		)
 		polygon(
 			Vector(0.6, -0.5, i),
 			Vector( 20, -0.5, i),
 			Vector( 20, -0.5, i + 1),
 			Vector(0.6, -0.5, i + 1),
-			fill = "green" if i % 2 == 0 else "darkgreen",
-			tag = "frame"
+			fill = "green" if i % 2 == 0 else "darkgreen"
 		)
 	if(debug):
 		canvas.create_text(
