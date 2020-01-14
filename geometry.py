@@ -25,17 +25,15 @@ def flatten(vector):
 	vector.y *= -1
 	return vector.x/vector.z, vector.y/vector.z
 
-# We should move this function later, **not to setup**.
 def pointToPixel(point):
 
 	# Get the size of the window
-	# root.update()
 	width = canvas.winfo_width()
 	height = canvas.winfo_height()
 
 	# Get the coordinates in pixels based on the window width and height
 	# This should let the window be stretchable
-	x = (width/2)  + (width/2)  * point[0]
+	x = (width/2)  + (height/2) * point[0]
 	y = (height/2) + (height/2) * point[1]
 
 	return x, y
