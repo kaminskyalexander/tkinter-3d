@@ -1,11 +1,12 @@
 import tkinter as tk
+from math import cos, sin
 from vector import Vector
 
 root = tk.Tk()
 width = 1280
 height = 720
 camera = Vector(0, 0, 0)
-
+rotation = Vector(0, 0, 0)
 
 canvas = tk.Canvas(
     root,

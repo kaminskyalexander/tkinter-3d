@@ -17,9 +17,9 @@ def intersection(a, b, c, d, x1, y1, z1, x2, y2, z2):
 	return x, y, z
 
 # This also flips the y value when converting from 3d to 2d space.
-def flatten(x, y, z):
-	y *= -1
-	return x/z, y/z
+def flatten(vector):
+	vector.y *= -1
+	return vector.x/vector.z, vector.y/vector.z
 
 # We should move this function later, **not to setup**.
 def pointToPixel(point):
@@ -36,14 +36,58 @@ def pointToPixel(point):
 
 	return x, y
 
+# Reference: https://math.stackexchange.com/a/1741317
+def rotationMatrix(rotation):
+	x, y, z = rotation.x, rotation.y, rotation.z
+	A = [
+		[
+			cos(y)*cos(z),
+			cos(x)*sin(z) + sin(x)*sin(y)*sin(z),
+			sin(x)*sin(z) - cos(x)*sin(y)*cos(z)
+		],
+		[
+			-cos(y)*sin(z),
+			cos(x)*cos(z) - sin(x)*sin(y)*sin(z),
+			sin(x)*cos(z) + cos(x)*sin(y)*sin(z)
+		],
+		[
+			sin(y),
+			-sin(x)*cos(y),
+			cos(x)*cos(y)
+		]
+	]
+	return A
 
+# Takes in a point vector and a rotation vector
+# Calculation is relative to the origin
+def rotate(vector, rotation):
+	A = rotationMatrix(rotation)
+	new = Vector(
+		A[0][0]*vector.x + A[0][1]*vector.y + A[0][2]*vector.z,
+		A[1][0]*vector.x + A[1][1]*vector.y + A[1][2]*vector.z,
+		A[2][0]*vector.x + A[2][1]*vector.y + A[2][2]*vector.z
+	)
+	return new
+
+# The messy implementation of drawing a rectangle
+# Takes in vectors as arguments and effects to apply
+# to the shape as keyword arguments in the same format
+# as Tkinter's canvas.create_polygon()
 def polygon(*args, **kwargs):
-	for v in args:
-		v.x -= camera.x
-		v.y -= camera.y
-		v.z -= camera.z
+	for vector in args:
+		# Apply the camera position to each point
+		vector.x -= camera.x
+		vector.y -= camera.y
+		vector.z -= camera.z
+		# Apply rotation
+		rotatedForm = rotate(vector, rotation)
+		vector.x = rotatedForm.x
+		vector.y = rotatedForm.y
+		vector.z = rotatedForm.z
 	newVerticies = []
+	# How close to the screen should objects be culled
 	cutoff = 0.25
+	# How far away from the screen objects should be culled
 	renderDistance = 14
 	onScreen = False
 	for v in args:
@@ -73,7 +117,14 @@ def polygon(*args, **kwargs):
 
 		if(newVerticies):
 			return canvas.create_polygon(
-				[pointToPixel(flatten(vertex.x, vertex.y, vertex.z)) for vertex in newVerticies],
+				[pointToPixel(flatten(vertex)) for vertex in newVerticies],
 				kwargs
 			)
 	return None
+
+# ROTATION DEBUG ......................................
+# if __name__ == "__main__":
+# 	DEBUG_POINT = Vector(2, 1, 3)
+# 	DEBUG_ROTATION = Vector(0, 0, 0)
+# 	DEBUG_VALUE = rotate(DEBUG_POINT, DEBUG_ROTATION)
+# 	print(DEBUG_VALUE)

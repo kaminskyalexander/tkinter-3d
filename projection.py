@@ -14,9 +14,9 @@ def update():
 	if((binds["back"], "press") in inputs["keys"]):
 		camera.z -= 0.1
 	if((binds["right"], "press") in inputs["keys"]):
-		camera.x += 0.05
+		rotation.y += 0.1
 	if((binds["left"], "press") in inputs["keys"]):
-		camera.x -= 0.05
+		rotation.y -= 0.1
 
 	canvas.delete("frame")
 	# background
