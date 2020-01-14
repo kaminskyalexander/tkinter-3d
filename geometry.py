@@ -41,8 +41,8 @@ def pointToPixel(point):
 	return x, y
 
 # Reference: https://math.stackexchange.com/a/1741317
-def rotationMatrix(rotation):
-	x, y, z = rotation.x, rotation.y, rotation.z
+def rotationMatrix(vector):
+	x, y, z = vector.x, vector.y, vector.z
 	A = [
 		[
 			cos(y)*cos(z),
@@ -64,8 +64,8 @@ def rotationMatrix(rotation):
 
 # Takes in a point vector and a rotation vector
 # Calculation is relative to the origin
-def rotate(vector, rotation):
-	A = rotationMatrix(rotation)
+def rotate(vector, matrix):
+	A = matrix
 	new = Vector(
 		A[0][0]*vector.x + A[0][1]*vector.y + A[0][2]*vector.z,
 		A[1][0]*vector.x + A[1][1]*vector.y + A[1][2]*vector.z,
@@ -78,16 +78,15 @@ def rotate(vector, rotation):
 # to the shape as keyword arguments in the same format
 # as Tkinter's canvas.create_polygon()
 def polygon(*args, **kwargs):
+	global rotation
+	matrix = rotationMatrix(rotation)
 	for vector in args:
 		# Apply the camera position to each point
 		vector.x -= camera.x
 		vector.y -= camera.y
 		vector.z -= camera.z
 		# Apply rotation
-		rotatedForm = rotate(vector, rotation)
-		vector.x = rotatedForm.x
-		vector.y = rotatedForm.y
-		vector.z = rotatedForm.z
+		vector.assign(rotate(vector, matrix))
 	newVerticies = []
 	# How close to the screen should objects be culled
 	cutoff = 0.25

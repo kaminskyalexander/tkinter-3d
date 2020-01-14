@@ -1,6 +1,6 @@
 from setup import *
 from inputs import *
-from geometry import polygon, rotate, flip
+from geometry import polygon, rotate, flip, rotationMatrix
 
 events = Inputs()
 debug = True
@@ -34,7 +34,7 @@ def update():
 		camera.assign(Vector(0, 0, 0))
 		rotation.assign(Vector(0, 0, 0))
 
-	movement = rotate(movement, flip(rotation))
+	movement = rotate(movement, rotationMatrix(flip(rotation)))
 	camera.add(movement)
 
 	#makeshift fix :)
