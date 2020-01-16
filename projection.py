@@ -6,6 +6,8 @@ events = Inputs()
 debug = True
 
 def update():
+	start = int(time() * 1000)
+
 	movement = Vector(0, 0, 0)
 	if((binds["forward"], "press") in inputs["keys"]):
 		if((binds["speed"], "press") in inputs["keys"]):
@@ -86,22 +88,34 @@ def update():
 			Vector(0.6, -0.5, i + 1),
 			fill = "green" if i % 2 == 0 else "darkgreen"
 		)
+
+	events.update()
+	wait = int(time() * 1000) - start
+	rate = 1000 // framerate
+	delay = rate - wait if rate - wait < rate else rate
+	if(delay < 1): delay = 1
+	
 	if(debug):
 		canvas.create_text(
 			10, 10,
-			text = "Tkinter 3D Racetrack Test\nFramerate: {}\nX: {}\nY: {}\nZ: {}".format(
-				"Undefined",
+			text = "Tkinter 3D Racetrack Test\nXYZ: {} / {} / {}\nRotation: {} / {} / {}\nFramerate Info:\n   Configured FPS: {}\n   Wait: {}\n   Rate: {}\n   Delay: {}".format(
 				camera.x,
 				camera.y,
-				camera.z
+				camera.z,
+				rotation.x,
+				rotation.y,
+				rotation.z,
+				framerate,
+				wait,
+				rate,
+				delay
 			),
 			font = ("System", 11, ""),
 			anchor = "nw",
 			tag = "frame"
 		)
 
-	events.update()
-	canvas.after(20, update)
+	canvas.after(delay,	update)
 
 update()
 tk.mainloop()
