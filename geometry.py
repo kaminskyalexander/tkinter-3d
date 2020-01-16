@@ -22,8 +22,8 @@ def intersection(a, b, c, d, x1, y1, z1, x2, y2, z2):
 
 # This also flips the y value when converting from 3d to 2d space.
 def flatten(vector):
-	vector.y *= -1
-	return vector.x/vector.z, vector.y/vector.z
+	x, y, z = vector.x, vector.y * -1, vector.z
+	return x/z, y/z
 
 def pointToPixel(point):
 
@@ -77,7 +77,7 @@ def rotate(vector, matrix):
 # Takes in vectors as arguments and effects to apply
 # to the shape as keyword arguments in the same format
 # as Tkinter's canvas.create_polygon()
-def polygon(*args, **kwargs):
+def polygon(*args, debug = False, **kwargs):
 	global rotation
 	matrix = rotationMatrix(rotation)
 	for vector in args:
@@ -124,6 +124,20 @@ def polygon(*args, **kwargs):
 				newVerticies.append(args[i])
 
 		if(newVerticies):
+			if(debug):
+				DEBUG_TEXT = ""
+				for vertex in newVerticies:
+					DEBUG_TEXT += (
+						str(vertex.x) + "\n" + 
+						str(vertex.y) + "\n" +
+						str(vertex.z) + "\n\n"
+					)
+				canvas.create_text(
+					pointToPixel(flatten(newVerticies[0])),
+					text = DEBUG_TEXT,
+					font = ("System", 11, ""),
+					tag = ("frame", "debug")
+				)
 			return canvas.create_polygon(
 				[pointToPixel(flatten(vertex)) for vertex in newVerticies],
 				kwargs,

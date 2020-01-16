@@ -51,50 +51,59 @@ def update():
 		width = 0,
 		tag = "frame"
 	)
-	for i in range(0, 100):
-		polygon(
-			Vector(-0.65, -0.5, (i)/2),
-			Vector(-0.45, -0.5, (i)/2),
-			Vector(-0.45, -0.5, (i+1)/2),
-			Vector(-0.65, -0.5, (i+1)/2),
-			fill = "darkred" if i % 2 == 0 else "#ddd"
-		)
-		polygon(
-			Vector( 0.45, -0.5, (i)/2),
-			Vector( 0.65, -0.5, (i)/2),
-			Vector( 0.65, -0.5, (i+1)/2),
-			Vector( 0.45, -0.5, (i+1)/2),
-			fill = "darkred" if i % 2 == 0 else "#ddd"
-		)
-	for i in range(0, 50):
-		polygon(
-			Vector(-0.5, -0.5, i),
-			Vector( 0.5, -0.5, i),
-			Vector( 0.5, -0.5, i + 1),
-			Vector(-0.5, -0.5, i + 1),
-			fill = "#666" if i % 2 == 0 else "#555"
-		)
-		polygon(
-			Vector(-0.6, -0.5, i),
-			Vector( -20, -0.5, i),
-			Vector( -20, -0.5, i + 1),
-			Vector(-0.6, -0.5, i + 1),
-			fill = "green" if i % 2 == 0 else "darkgreen"
-		)
-		polygon(
-			Vector(0.6, -0.5, i),
-			Vector( 20, -0.5, i),
-			Vector( 20, -0.5, i + 1),
-			Vector(0.6, -0.5, i + 1),
-			fill = "green" if i % 2 == 0 else "darkgreen"
-		)
+	# for i in range(0, 100):
+	# 	polygon(
+	# 		Vector(-0.65, -0.5, (i)/2),
+	# 		Vector(-0.45, -0.5, (i)/2),
+	# 		Vector(-0.45, -0.5, (i+1)/2),
+	# 		Vector(-0.65, -0.5, (i+1)/2),
+	# 		fill = "darkred" if i % 2 == 0 else "#ddd"
+	# 	)
+	# 	polygon(
+	# 		Vector( 0.45, -0.5, (i)/2),
+	# 		Vector( 0.65, -0.5, (i)/2),
+	# 		Vector( 0.65, -0.5, (i+1)/2),
+	# 		Vector( 0.45, -0.5, (i+1)/2),
+	# 		fill = "darkred" if i % 2 == 0 else "#ddd"
+	# 	)
+	# for i in range(0, 50):
+	# 	polygon(
+	# 		Vector(-0.5, -0.5, i),
+	# 		Vector( 0.5, -0.5, i),
+	# 		Vector( 0.5, -0.5, i + 1),
+	# 		Vector(-0.5, -0.5, i + 1),
+	# 		fill = "#666" if i % 2 == 0 else "#555"
+	# 	)
+	# 	polygon(
+	# 		Vector(-0.6, -0.5, i),
+	# 		Vector( -20, -0.5, i),
+	# 		Vector( -20, -0.5, i + 1),
+	# 		Vector(-0.6, -0.5, i + 1),
+	# 		fill = "green" if i % 2 == 0 else "darkgreen"
+	# 	)
+	# 	polygon(
+	# 		Vector(0.6, -0.5, i),
+	# 		Vector( 20, -0.5, i),
+	# 		Vector( 20, -0.5, i + 1),
+	# 		Vector(0.6, -0.5, i + 1),
+	# 		fill = "green" if i % 2 == 0 else "darkgreen"
+	# 	)
+	polygon(
+		Vector(-10, -1, 1),
+		Vector( 10, -1, 1),
+		Vector( 10, -1, 4),
+		Vector(-10, -1, 4),
+		debug = True,
+		fill = "yellow"
+	)
 
+	canvas.tag_raise("debug")
 	events.update()
 	wait = int(time() * 1000) - start
 	rate = 1000 // framerate
 	delay = rate - wait if rate - wait < rate else rate
 	if(delay < 1): delay = 1
-	
+
 	if(debug):
 		canvas.create_text(
 			10, 10,
@@ -112,7 +121,7 @@ def update():
 			),
 			font = ("System", 11, ""),
 			anchor = "nw",
-			tag = "frame"
+			tag = ("frame", debug)
 		)
 
 	canvas.after(delay,	update)
