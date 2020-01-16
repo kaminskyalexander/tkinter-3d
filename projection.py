@@ -21,17 +21,17 @@ def update():
 	if((binds["up"], "press") in inputs["keys"]):
 		movement.y += 0.1
 	if((binds["look-left"], "press") in inputs["keys"]):
-		rotation.y -= 0.1
+		rotation.y -= 1
 	if((binds["look-right"], "press") in inputs["keys"]):
-		rotation.y += 0.1
+		rotation.y += 1
 	if((binds["look-up"], "press") in inputs["keys"]):
-		rotation.x -= 0.1
+		rotation.x -= 1
 	if((binds["look-down"], "press") in inputs["keys"]):
-		rotation.x += 0.1
+		rotation.x += 1
 	if((binds["tilt-left"], "press") in inputs["keys"]):
-		rotation.z += 0.1
+		rotation.z += 1
 	if((binds["tilt-right"], "press") in inputs["keys"]):
-		rotation.z -= 0.1
+		rotation.z -= 1
 	if((binds["reset"], "press") in inputs["keys"]):
 		camera.assign(Vector(0, 0, 0))
 		rotation.assign(Vector(0, 0, 0))

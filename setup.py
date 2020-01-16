@@ -1,5 +1,5 @@
 import tkinter as tk
-from math import cos, sin
+from math import cos, sin, pi
 from time import time, sleep
 from vector import Vector
 

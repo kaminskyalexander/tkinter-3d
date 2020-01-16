@@ -18,7 +18,7 @@ def intersection(a, b, c, d, x1, y1, z1, x2, y2, z2):
 	y = y1 - (y2 - y1) * t
 	z = z1 - (z2 - z1) * t
 
-	return x, y, z
+	return Vector(x, y, z)
 
 # This also flips the y value when converting from 3d to 2d space.
 def flatten(vector):
@@ -40,8 +40,10 @@ def pointToPixel(point):
 
 # Reference: https://math.stackexchange.com/a/1741317
 def rotationMatrix(vector):
-	x, y, z = vector.x, vector.y, vector.z
-	A = [
+	x = (vector.x/360) * (pi * 2)
+	y = (vector.y/360) * (pi * 2)
+	z = (vector.z/360) * (pi * 2)
+	matrix = [
 		[
 			cos(y)*cos(z),
 			cos(x)*sin(z) + sin(x)*sin(y)*sin(z),
@@ -58,7 +60,7 @@ def rotationMatrix(vector):
 			cos(x)*cos(y)
 		]
 	]
-	return A
+	return matrix
 
 # Takes in a point vector and a rotation vector
 # Calculation is relative to the origin
@@ -111,8 +113,13 @@ def polygon(*args, **kwargs):
 
 				for neighbour in neighbours:
 					if(neighbour.z > cutoff):
-						interpoint = intersection(0, 0, 1, -cutoff, args[i].x, args[i].y, args[i].z, neighbour.x, neighbour.y, neighbour.z)
-						newVerticies.append(Vector(interpoint[0], interpoint[1], interpoint[2]))
+						newVerticies.append(
+							intersection(
+								0, 0, 1, -cutoff, # Plane: z = 0.25
+								args[i].x, args[i].y, args[i].z,
+								neighbour.x, neighbour.y, neighbour.z
+							)
+						)
 			else:
 				newVerticies.append(args[i])
 
