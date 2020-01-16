@@ -33,8 +33,8 @@ def pointToPixel(point):
 
 	# Get the coordinates in pixels based on the window width and height
 	# This should let the window be stretchable
-	x = (width/2)  + (height/2) * point[0]
-	y = (height/2) + (height/2) * point[1]
+	x = (width/2  + offset.x) + (height/2) * point[0]
+	y = (height/2 + offset.y) + (height/2) * point[1]
 
 	return x, y
 

@@ -35,6 +35,15 @@ def update():
 	if((binds["reset"], "press") in inputs["keys"]):
 		camera.assign(Vector(0, 0, 0))
 		rotation.assign(Vector(0, 0, 0))
+		offset.assign(Vector(0, 0, 0))
+	if((binds["camoffset-up"], "press") in inputs["keys"]):
+		offset.y += 5
+	if((binds["camoffset-down"], "press") in inputs["keys"]):
+		offset.y -= 5
+	if((binds["camoffset-left"], "press") in inputs["keys"]):
+		offset.x += 5
+	if((binds["camoffset-right"], "press") in inputs["keys"]):
+		offset.x -= 5
 
 	movement = rotate(movement, rotationMatrix(flip(rotation)))
 	camera.add(movement)
@@ -107,13 +116,20 @@ def update():
 	if(debug):
 		canvas.create_text(
 			10, 10,
-			text = "Tkinter 3D Racetrack Test\nXYZ: {} / {} / {}\nRotation: {} / {} / {}\nFramerate Info:\n   Configured FPS: {}\n   Wait: {}\n   Rate: {}\n   Delay: {}".format(
-				camera.x,
-				camera.y,
-				camera.z,
-				rotation.x,
-				rotation.y,
-				rotation.z,
+			text = """\
+Tkinter 3D Racetrack Test
+XYZ: {} / {} / {}
+Rotation: {} / {} / {}
+Offset: {} / {} / {}
+Framerate Info:
+   Configured FPS: {}
+   Wait: {}
+   Rate: {}
+   Delay: {}\
+""".format(
+				camera.x, camera.y, camera.z,
+				rotation.x, rotation.y,	rotation.z,
+				offset.x, offset.y, offset.z,
 				framerate,
 				wait,
 				rate,

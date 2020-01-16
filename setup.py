@@ -9,6 +9,7 @@ height = 720
 framerate = 60
 camera = Vector(0, 0, 0)
 rotation = Vector(0, 0, 0)
+offset = Vector(0, 0, 0)
 
 canvas = tk.Canvas(
     root,
@@ -34,7 +35,12 @@ binds = {
     "tilt-left": 37,
     "tilt-right": 39,
     # Gameplay.......
-    "reset": 82
+    "reset": 82,
+    # Debug Camera Offset
+    "camoffset-left": 70,
+    "camoffset-right": 72,
+    "camoffset-up": 84,
+    "camoffset-down": 71
 }
 
 inputs = {
