@@ -30,5 +30,5 @@ class Vector:
 		self.y = vector.y
 		self.z = vector.z
 
-	def listify(self): 
+	def get(self): 
 		return self.x, self.y, self.z

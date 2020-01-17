@@ -73,7 +73,6 @@ def rotate(vector, matrix):
 	)
 	return new
 
-
 def getNeighbours(index, verticies):
 	neighbours = []
 	if(index > 0):
@@ -87,149 +86,101 @@ def getNeighbours(index, verticies):
 		neighbours.append(verticies[0])
 	return neighbours
 
-# The messy implementation of drawing a rectangle
-# Takes in vectors as arguments and effects to apply
-# to the shape as keyword arguments in the same format
-# as Tkinter's canvas.create_polygon()
-def polygon(*args, debug = False, **kwargs):
-	global rotation
+def cull(*args):
 	verticies = args[:]
 	# How close to the screen should objects be culled
 	cutoff = 0.25
 	# How far away from the screen objects should be culled
 	renderDistance = 20
+
+	# Plane equations
+	# (a, b, c, d values for "Ax + By + Cz + D = 0")
 	widthRatio = 1/(canvas.winfo_width()/canvas.winfo_height())
 	planes = {
-		"behind":(0, 0, 1, -cutoff),
-		"ahead": (0, 0, 1, -renderDistance),
-		"top":   (0, 1, -1, 0),
-		"bottom":(0, 1, 1, 0),
-		"left":  (widthRatio, 0, 1, 0),
-		"right": (widthRatio, 0, -1, 0)
+		"behind": (0, 0, 1, -cutoff),
+		"ahead":  (0, 0, 1, -renderDistance),
+		"top":    (0, 1, -1, 0),
+		"bottom": (0, 1, 1, 0),
+		"left":   (widthRatio, 0, 1, 0),
+		"right":  (widthRatio, 0, -1, 0)
 	}
 
+	for direction in planes:
+		new = []
+		for i in range(len(verticies)):
+			neighbours = getNeighbours(i, verticies)
 
+			# Detect if the vertex is outside the frustum (viewable area)
+			if(
+				(direction == "behind" and verticies[i].z <  cutoff) or
+				(direction == "ahead"  and verticies[i].z >  renderDistance) or
+				(direction == "top"    and verticies[i].y >  verticies[i].z) or
+				(direction == "bottom" and verticies[i].y < -verticies[i].z) or
+				(direction == "left"   and verticies[i].x*widthRatio < -verticies[i].z) or
+				(direction == "right"  and verticies[i].x*widthRatio >  verticies[i].z)
+			):
+				for neighbour in neighbours:
+					# Detect if the vertex has a neighbouring point inside the frustum
+					if(
+						(direction == "behind" and not neighbour.z <  cutoff) or
+						(direction == "ahead"  and not neighbour.z >  renderDistance) or
+						(direction == "top"    and not neighbour.y >  neighbour.z) or
+						(direction == "bottom" and not neighbour.y < -neighbour.z) or
+						(direction == "left"   and not neighbour.x*widthRatio < -neighbour.z) or
+						(direction == "right"  and not neighbour.x*widthRatio >  neighbour.z)
+					):
+						# If the point has a neighbour, find where the edge connecting the
+						# two points intersects the plane to "slice" the shape along the
+						# edge of the frustum
+						new.append(
+							intersection(
+								*planes[direction], 
+								*verticies[i].get(),
+								*neighbour.get()
+							)
+						)
+			else: new.append(verticies[i])
+		# Reset the state for the next direction
+		verticies = new[:]
+
+	return new
+
+# Draws a polygon in 3D space
+# Takes in vectors as arguments and effects to apply
+# to the shape as keyword arguments in the same format
+# as Tkinter's canvas.create_polygon()
+def polygon(*args, debug = False, **kwargs):
+
+	# Find the rotation matrix and apply it onto all points
 	matrix = rotationMatrix(rotation)
-	for vector in verticies:
+	for vector in args:
 		# Apply the camera position to each point
 		vector.subtract(camera)
 		# Apply rotation
 		vector.assign(rotate(vector, matrix))
 
-	newVerticies = []
+	verticies = cull(*args)
+	if(verticies):
 
-	for i in range(len(verticies)):
-		neighbours = getNeighbours(i, verticies)
-		onScreen = True
-
-		if(verticies[i].x*widthRatio < -verticies[i].z):
-			onScreen = False
-			for neighbour in neighbours:
-				if(not neighbour.x*widthRatio < -neighbour.z):
-					point = intersection(*planes["left"], *verticies[i].listify(), *neighbour.listify())
-					newVerticies.append(point)
-
-		if(onScreen):
-			newVerticies.append(verticies[i])
-	
-	verticies = newVerticies[:]
-	newVerticies = []
-	for i in range(len(verticies)):
-		neighbours = getNeighbours(i, verticies)
-		onScreen = True
-		if(verticies[i].x*widthRatio > verticies[i].z):
-			onScreen = False
-			for neighbour in neighbours:
-				if(not neighbour.x*widthRatio > neighbour.z):
-					point = intersection(*planes["right"], *verticies[i].listify(), *neighbour.listify())
-					newVerticies.append(point)
-
-		if(onScreen):
-			newVerticies.append(verticies[i])
-
-	verticies = newVerticies[:]
-	newVerticies = []
-	for i in range(len(verticies)):
-		neighbours = getNeighbours(i, verticies)
-		onScreen = True
-		if(verticies[i].y > verticies[i].z):
-			onScreen = False
-			for neighbour in neighbours:
-				if(not neighbour.y > neighbour.z):
-					point = intersection(*planes["top"], *verticies[i].listify(), *neighbour.listify())
-					newVerticies.append(point)
-		if(onScreen):
-			newVerticies.append(verticies[i])
-
-	verticies = newVerticies[:]
-	newVerticies = []
-	for i in range(len(verticies)):
-		neighbours = getNeighbours(i, verticies)
-		onScreen = True
-		if(verticies[i].y < -verticies[i].z):
-			onScreen = False
-			for neighbour in neighbours:
-				if(not neighbour.y < -neighbour.z):
-					point = intersection(*planes["bottom"], *verticies[i].listify(), *neighbour.listify())
-					newVerticies.append(point)
-
-		if(onScreen):
-			newVerticies.append(verticies[i])
-
-	verticies = newVerticies[:]
-	newVerticies = []
-
-	for i in range(len(verticies)):
-		neighbours = getNeighbours(i, verticies)
-		onScreen = True
-
-		if(verticies[i].z < cutoff):
-			onScreen = False
-			for neighbour in neighbours:
-				if(not neighbour.z < cutoff):
-					point = intersection(*planes["behind"], *verticies[i].listify(), *neighbour.listify())
-					newVerticies.append(point)
-
-		if(verticies[i].z > renderDistance):
-			onScreen = False
-			for neighbour in neighbours:
-				if(not neighbour.z > renderDistance):
-					point = intersection(*planes["ahead"], *verticies[i].listify(), *neighbour.listify())
-					newVerticies.append(point)
-		if(onScreen):
-			newVerticies.append(verticies[i])
-
-
-	if(newVerticies):
+		# Debug text
 		if(debug):
 			DEBUG_TEXT = ""
-			for vertex in newVerticies:
+			for vertex in verticies:
 				DEBUG_TEXT += (
 					str(vertex.x) + "\n" + 
 					str(vertex.y) + "\n" +
 					str(vertex.z) + "\n\n"
 				)
 			canvas.create_text(
-				pointToPixel(flatten(newVerticies[0])),
+				pointToPixel(flatten(verticies[0])),
 				text = DEBUG_TEXT,
 				font = ("System", 11, ""),
 				tag = ("frame", "debug")
 			)
+		
+		# Draw the shape
 		return canvas.create_polygon(
-			[pointToPixel(flatten(vertex)) for vertex in newVerticies],
+			[pointToPixel(flatten(vertex)) for vertex in verticies],
 			kwargs,
 			tag = "frame"
 		)
-	return None
-
-
-#INTERSECTION DEBUG
-# if __name__ == "__main__":
-# 	print(intersection(1, 0, 0, 0, 0, 1, 1, 0, 1, 2))
-
-# ROTATION DEBUG ......................................
-# if __name__ == "__main__":
-# 	DEBUG_POINT = Vector(2, 1, 3)
-# 	DEBUG_ROTATION = Vector(0, 0, 0)
-# 	DEBUG_VALUE = rotate(DEBUG_POINT, DEBUG_ROTATION)
-# 	print(DEBUG_VALUE)
