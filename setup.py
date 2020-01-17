@@ -27,6 +27,8 @@ binds = {
     "up": 32,
     "down": 17,
     "speed": 16,
+    "left": 81,
+    "right": 69,
     # Camera.........
     "look-left": 65,
     "look-right": 68,

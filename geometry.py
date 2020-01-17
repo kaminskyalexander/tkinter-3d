@@ -73,77 +73,159 @@ def rotate(vector, matrix):
 	)
 	return new
 
+
+def getNeighbours(index, verticies):
+	neighbours = []
+	if(index > 0):
+		neighbours.append(verticies[index - 1])
+	else:
+		neighbours.append(verticies[len(verticies) - 1])
+
+	if(index < len(verticies) - 1):
+		neighbours.append(verticies[index + 1])
+	else:
+		neighbours.append(verticies[0])
+	return neighbours
+
 # The messy implementation of drawing a rectangle
 # Takes in vectors as arguments and effects to apply
 # to the shape as keyword arguments in the same format
 # as Tkinter's canvas.create_polygon()
 def polygon(*args, debug = False, **kwargs):
 	global rotation
-	matrix = rotationMatrix(rotation)
-	for vector in args:
-		# Apply the camera position to each point
-		vector.x -= camera.x
-		vector.y -= camera.y
-		vector.z -= camera.z
-		# Apply rotation
-		vector.assign(rotate(vector, matrix))
-	newVerticies = []
+	verticies = args[:]
 	# How close to the screen should objects be culled
 	cutoff = 0.25
 	# How far away from the screen objects should be culled
-	renderDistance = 14
-	onScreen = False
-	for v in args:
-		if(v.z < renderDistance):
-			onScreen = True
-			break
-	if(onScreen):
-		for i in range(len(args)):
-			if(args[i].z < cutoff):
-				neighbours = []
-				if(i > 0):
-					neighbours.append(args[i - 1])
-				else:
-					neighbours.append(args[len(args) - 1])
+	renderDistance = 20
+	widthRatio = 1/(canvas.winfo_width()/canvas.winfo_height())
+	planes = {
+		"behind":(0, 0, 1, -cutoff),
+		"ahead": (0, 0, 1, -renderDistance),
+		"top":   (0, 1, -1, 0),
+		"bottom":(0, 1, 1, 0),
+		"left":  (widthRatio, 0, 1, 0),
+		"right": (widthRatio, 0, -1, 0)
+	}
 
-				if(i < len(args) - 1):
-					neighbours.append(args[i + 1])
-				else:
-					neighbours.append(args[0])
 
-				for neighbour in neighbours:
-					if(neighbour.z > cutoff):
-						newVerticies.append(
-							intersection(
-								0, 0, 1, -cutoff, # Plane: z = 0.25
-								args[i].x, args[i].y, args[i].z,
-								neighbour.x, neighbour.y, neighbour.z
-							)
-						)
-			else:
-				newVerticies.append(args[i])
+	matrix = rotationMatrix(rotation)
+	for vector in verticies:
+		# Apply the camera position to each point
+		vector.subtract(camera)
+		# Apply rotation
+		vector.assign(rotate(vector, matrix))
 
-		if(newVerticies):
-			if(debug):
-				DEBUG_TEXT = ""
-				for vertex in newVerticies:
-					DEBUG_TEXT += (
-						str(vertex.x) + "\n" + 
-						str(vertex.y) + "\n" +
-						str(vertex.z) + "\n\n"
-					)
-				canvas.create_text(
-					pointToPixel(flatten(newVerticies[0])),
-					text = DEBUG_TEXT,
-					font = ("System", 11, ""),
-					tag = ("frame", "debug")
+	newVerticies = []
+
+	for i in range(len(verticies)):
+		neighbours = getNeighbours(i, verticies)
+		onScreen = True
+
+		if(verticies[i].x*widthRatio < -verticies[i].z):
+			onScreen = False
+			for neighbour in neighbours:
+				if(not neighbour.x*widthRatio < -neighbour.z):
+					point = intersection(*planes["left"], *verticies[i].listify(), *neighbour.listify())
+					newVerticies.append(point)
+
+		if(onScreen):
+			newVerticies.append(verticies[i])
+	
+	verticies = newVerticies[:]
+	newVerticies = []
+	for i in range(len(verticies)):
+		neighbours = getNeighbours(i, verticies)
+		onScreen = True
+		if(verticies[i].x*widthRatio > verticies[i].z):
+			onScreen = False
+			for neighbour in neighbours:
+				if(not neighbour.x*widthRatio > neighbour.z):
+					point = intersection(*planes["right"], *verticies[i].listify(), *neighbour.listify())
+					newVerticies.append(point)
+
+		if(onScreen):
+			newVerticies.append(verticies[i])
+
+	verticies = newVerticies[:]
+	newVerticies = []
+	for i in range(len(verticies)):
+		neighbours = getNeighbours(i, verticies)
+		onScreen = True
+		if(verticies[i].y > verticies[i].z):
+			onScreen = False
+			for neighbour in neighbours:
+				if(not neighbour.y > neighbour.z):
+					point = intersection(*planes["top"], *verticies[i].listify(), *neighbour.listify())
+					newVerticies.append(point)
+		if(onScreen):
+			newVerticies.append(verticies[i])
+
+	verticies = newVerticies[:]
+	newVerticies = []
+	for i in range(len(verticies)):
+		neighbours = getNeighbours(i, verticies)
+		onScreen = True
+		if(verticies[i].y < -verticies[i].z):
+			onScreen = False
+			for neighbour in neighbours:
+				if(not neighbour.y < -neighbour.z):
+					point = intersection(*planes["bottom"], *verticies[i].listify(), *neighbour.listify())
+					newVerticies.append(point)
+
+		if(onScreen):
+			newVerticies.append(verticies[i])
+
+	verticies = newVerticies[:]
+	newVerticies = []
+
+	for i in range(len(verticies)):
+		neighbours = getNeighbours(i, verticies)
+		onScreen = True
+
+		if(verticies[i].z < cutoff):
+			onScreen = False
+			for neighbour in neighbours:
+				if(not neighbour.z < cutoff):
+					point = intersection(*planes["behind"], *verticies[i].listify(), *neighbour.listify())
+					newVerticies.append(point)
+
+		if(verticies[i].z > renderDistance):
+			onScreen = False
+			for neighbour in neighbours:
+				if(not neighbour.z > renderDistance):
+					point = intersection(*planes["ahead"], *verticies[i].listify(), *neighbour.listify())
+					newVerticies.append(point)
+		if(onScreen):
+			newVerticies.append(verticies[i])
+
+
+	if(newVerticies):
+		if(debug):
+			DEBUG_TEXT = ""
+			for vertex in newVerticies:
+				DEBUG_TEXT += (
+					str(vertex.x) + "\n" + 
+					str(vertex.y) + "\n" +
+					str(vertex.z) + "\n\n"
 				)
-			return canvas.create_polygon(
-				[pointToPixel(flatten(vertex)) for vertex in newVerticies],
-				kwargs,
-				tag = "frame"
+			canvas.create_text(
+				pointToPixel(flatten(newVerticies[0])),
+				text = DEBUG_TEXT,
+				font = ("System", 11, ""),
+				tag = ("frame", "debug")
 			)
+		return canvas.create_polygon(
+			[pointToPixel(flatten(vertex)) for vertex in newVerticies],
+			kwargs,
+			tag = "frame"
+		)
 	return None
+
+
+#INTERSECTION DEBUG
+# if __name__ == "__main__":
+# 	print(intersection(1, 0, 0, 0, 0, 1, 1, 0, 1, 2))
 
 # ROTATION DEBUG ......................................
 # if __name__ == "__main__":

@@ -16,6 +16,10 @@ def update():
 			movement.z += 0.1
 	if((binds["backward"], "press") in inputs["keys"]):
 		movement.z -= 0.1
+	if((binds["left"], "press") in inputs["keys"]):
+		movement.x -= 0.1
+	if((binds["right"], "press") in inputs["keys"]):
+		movement.x += 0.1
 	if((binds["down"], "press") in inputs["keys"]):
 		movement.y -= 0.1
 	if((binds["up"], "press") in inputs["keys"]):
@@ -44,6 +48,7 @@ def update():
 		offset.x += 5
 	if((binds["camoffset-right"], "press") in inputs["keys"]):
 		offset.x -= 5
+	
 
 	movement = rotate(movement, rotationMatrix(flip(rotation)))
 	camera.add(movement)
@@ -60,51 +65,43 @@ def update():
 		width = 0,
 		tag = "frame"
 	)
-	# for i in range(0, 100):
-	# 	polygon(
-	# 		Vector(-0.65, -0.5, (i)/2),
-	# 		Vector(-0.45, -0.5, (i)/2),
-	# 		Vector(-0.45, -0.5, (i+1)/2),
-	# 		Vector(-0.65, -0.5, (i+1)/2),
-	# 		fill = "darkred" if i % 2 == 0 else "#ddd"
-	# 	)
-	# 	polygon(
-	# 		Vector( 0.45, -0.5, (i)/2),
-	# 		Vector( 0.65, -0.5, (i)/2),
-	# 		Vector( 0.65, -0.5, (i+1)/2),
-	# 		Vector( 0.45, -0.5, (i+1)/2),
-	# 		fill = "darkred" if i % 2 == 0 else "#ddd"
-	# 	)
-	# for i in range(0, 50):
-	# 	polygon(
-	# 		Vector(-0.5, -0.5, i),
-	# 		Vector( 0.5, -0.5, i),
-	# 		Vector( 0.5, -0.5, i + 1),
-	# 		Vector(-0.5, -0.5, i + 1),
-	# 		fill = "#666" if i % 2 == 0 else "#555"
-	# 	)
-	# 	polygon(
-	# 		Vector(-0.6, -0.5, i),
-	# 		Vector( -20, -0.5, i),
-	# 		Vector( -20, -0.5, i + 1),
-	# 		Vector(-0.6, -0.5, i + 1),
-	# 		fill = "green" if i % 2 == 0 else "darkgreen"
-	# 	)
-	# 	polygon(
-	# 		Vector(0.6, -0.5, i),
-	# 		Vector( 20, -0.5, i),
-	# 		Vector( 20, -0.5, i + 1),
-	# 		Vector(0.6, -0.5, i + 1),
-	# 		fill = "green" if i % 2 == 0 else "darkgreen"
-	# 	)
-	polygon(
-		Vector(-10, -1, 1),
-		Vector( 10, -1, 1),
-		Vector( 10, -1, 4),
-		Vector(-10, -1, 4),
-		debug = True,
-		fill = "yellow"
-	)
+	for i in range(0, 100):
+		polygon(
+			Vector(-0.65, -0.5, (i)/2),
+			Vector(-0.45, -0.5, (i)/2),
+			Vector(-0.45, -0.5, (i+1)/2),
+			Vector(-0.65, -0.5, (i+1)/2),
+			fill = "darkred" if i % 2 == 0 else "#ddd"
+		)
+		polygon(
+			Vector( 0.45, -0.5, (i)/2),
+			Vector( 0.65, -0.5, (i)/2),
+			Vector( 0.65, -0.5, (i+1)/2),
+			Vector( 0.45, -0.5, (i+1)/2),
+			fill = "darkred" if i % 2 == 0 else "#ddd"
+		)
+	for i in range(0, 50):
+		polygon(
+			Vector(-0.5, -0.5, i),
+			Vector( 0.5, -0.5, i),
+			Vector( 0.5, -0.5, i + 1),
+			Vector(-0.5, -0.5, i + 1),
+			fill = "#666" if i % 2 == 0 else "#555"
+		)
+		polygon(
+			Vector(-0.6, -0.5, i),
+			Vector( -200, -0.5, i),
+			Vector( -200, -0.5, i + 1),
+			Vector(-0.6, -0.5, i + 1),
+			fill = "green" if i % 2 == 0 else "darkgreen"
+		)
+		polygon(
+			Vector(0.6, -0.5, i),
+			Vector( 200, -0.5, i),
+			Vector( 200, -0.5, i + 1),
+			Vector(0.6, -0.5, i + 1),
+			fill = "green" if i % 2 == 0 else "darkgreen"
+		)
 
 	canvas.tag_raise("debug")
 	events.update()

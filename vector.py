@@ -29,3 +29,6 @@ class Vector:
 		self.x = vector.x
 		self.y = vector.y
 		self.z = vector.z
+
+	def listify(self): 
+		return self.x, self.y, self.z
