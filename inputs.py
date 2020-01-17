@@ -1,4 +1,35 @@
-from setup import root, inputs
+from setup import root
+
+binds = {
+    # Movement ............
+    "forward": 87,
+    "backward": 83,
+    "up": 32,
+    "down": 17,
+    "speed": 16,
+    "left": 81,
+    "right": 69,
+    # Camera Direction ....
+    "look-left": 65,
+    "look-right": 68,
+    "look-up": 38,
+    "look-down": 40,
+    "tilt-left": 37,
+    "tilt-right": 39,
+    # Camera Offset .......
+    "camoffset-left": 70,
+    "camoffset-right": 72,
+    "camoffset-up": 84,
+    "camoffset-down": 71,
+    # Gameplay ............
+    "reset": 82,
+}
+
+inputs = {
+    "motion": {"x": 0, "y": 0},
+    "buttons": [],
+    "keys": []
+}
 
 class Inputs:
 
@@ -36,9 +67,9 @@ class Inputs:
             )
         )
 
-    @staticmethod
-    def apply(args):
+    def update(self):
         global inputs
+
         for key in inputs["keys"]:
             if(key[1] == "release"):
                 inputs["keys"].remove(key)
@@ -47,7 +78,7 @@ class Inputs:
             if(button[1] == "release"):
                 inputs["buttons"].remove(button)
 
-        for event in args:
+        for event in self.events:
             # Key Press
             if(event.type == "2"):
                 inputs["keys"].append((event.keycode, "press")) if (event.keycode, "press") not in inputs["keys"] else None
@@ -66,7 +97,5 @@ class Inputs:
             if(event.type == "6"):
                 inputs["motion"]["x"] = event.x
                 inputs["motion"]["y"] = event.y
-
-    def update(self):
-        Inputs.apply(self.events)
+        
         self.events.clear()
