@@ -107,7 +107,7 @@ def cull(*args):
 
 	for direction in planes:
 		new = []
-		for i in range(len(verticies)):
+		for i, vertex in enumerate(verticies):
 			neighbours = getNeighbours(i, verticies)
 
 			# Detect if the vertex is outside the frustum (viewable area)
