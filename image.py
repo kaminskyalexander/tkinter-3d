@@ -1,6 +1,9 @@
 from binascii import hexlify, unhexlify, crc32
 from zlib import decompress
 
+# PNG Magic Number
+signature = ["0x89", "0x50", "0x4e", "0x47", "0x0d", "0x0a", "0x1a", "0x0a"]
+
 # Takes an integer and converts it to a hexadecimal value
 # This value can be converted back to an integer using "int(n, 16)"
 def hexadecimal(number):
@@ -18,9 +21,6 @@ def hexString(*args):
 	for arg in args:
 		string += unhexlify(arg[2:])
 	return string
-
-# PNG Magic Number
-signature = ["0x89", "0x50", "0x4e", "0x47", "0x0d", "0x0a", "0x1a", "0x0a"]
 
 class Colour:
 
@@ -53,6 +53,7 @@ class PNG:
 			"rendering-indent": None
 		}
 		self.data = []
+		self.pixels = []
 
 		# Open the file and convert it to a list of hex values
 		with open(file, "rb") as f:
@@ -101,7 +102,6 @@ class PNG:
 
 					# End of file
 					elif(chunkType == b"IEND"):
-						print("Reached end of file.")
 						break
 
 					elif(chunkType == b"tRNS"):
@@ -140,10 +140,111 @@ class PNG:
 				# Remove chunk from main list
 				data = data[chunkSize + 12:]
 
-			# Convert the image data into an array of pixels/colours
-			...
+			# Convert the image data into an array of pixels/colours.
+			# Allowed combinations of bit depth and colour type:
+		   
+			# Colour:   Bit Depths:        Interpretation per pixel:
+			# 0 ....... 1, 2, 4, 8, 16 ... A grayscale sample.
+			# 2 ....... 8, 16 ............ An R, G, B triple.
+			# 3 ....... 1, 2, 4, 8 ....... A palette index; a PLTE chunk must appear.
+			# 4 ....... 8, 16 ............ A grayscale sample, followed by an alpha sample.				
+			# 6 ....... 8, 16 ............ An R, G ,B triple, followed by an alpha sample.	
+			
+			#print(self.properties)
+			if(self.properties["filter"] == 0):
+				# Scanlines (left to right, top to bottom)
+				if(self.properties["interlace"] == 0):
+
+					# Data amount per pixel based on specification above
+					if   (self.properties["colour-type"] == 0): valuesPerPixel = 1
+					elif (self.properties["colour-type"] == 2): valuesPerPixel = 3
+					elif (self.properties["colour-type"] == 3): valuesPerPixel = 1
+					elif (self.properties["colour-type"] == 4): valuesPerPixel = 2
+					elif (self.properties["colour-type"] == 6): valuesPerPixel = 4
+					else: raise Exception("Invalid colour type in PNG data")
+
+					# Only allow 8 bit sample depth
+					# TODO: Allow for other bit depths
+					if(self.properties["bit-depth"] != 8): raise NotImplementedError()
+
+					# Parse data into a 2D list
+					data = []
+					bytesPerRow = self.properties["width"] * valuesPerPixel + 1
+					for y in range(self.properties["height"]):
+						data.append([])
+						for x in range(bytesPerRow):
+							data[y].append(self.data[bytesPerRow * y + x])
+						#print(data[y])
+
+					# Unfilter the data
+					unfiltered = []
+					for y, row in enumerate(data):
+						unfiltered.append([])
+						filterType = int(row[0], 16)
+						for x, byte in enumerate(row[1:]):
+
+							# No filter
+							if(filterType == 0):
+								pass
+
+							# Sub filter
+							elif(filterType == 1):
+								
+								# Get corresponding byte
+								if(x < valuesPerPixel): correspondingByte = 0
+								else: correspondingByte = int(unfiltered[y][x - valuesPerPixel], 16)
+
+								# Apply the difference and multiply by power of bit depth
+								byte = hexadecimal((correspondingByte + int(byte, 16))%(2**8))
+
+							elif(filterType == 2): raise NotImplementedError()
+							elif(filterType == 3): raise NotImplementedError()
+							elif(filterType == 4): raise NotImplementedError()
+							else:
+								raise Exception("Invalid PNG filter type: " + str(filterType))
+
+							unfiltered[y].append(byte)
+						#print(unfiltered[y])
+
+					# Convert unfiltered data to pixel colour objects
+					for y, row in enumerate(unfiltered):
+						self.pixels.append([])
+						for x, byte in enumerate(row):
+							if(x % valuesPerPixel == 0):
+
+								if(self.properties["colour-type"] == 0):
+									shade = byte
+									colour = Colour(shade, shade, shade)
+								elif(self.properties["colour-type"] == 2):
+									r, g, b = unfiltered[y][x:x+3]
+									colour = Colour(r, g, b)
+								elif(self.properties["colour-type"] == 3):
+									raise NotImplementedError()
+								elif(self.properties["colour-type"] == 4):
+									shade, a = unfiltered[y][x:x+2]
+									colour = Colour(shade, shade, shade, alpha = a)
+								elif(self.properties["colour-type"] == 6):
+									r, g, b, a = unfiltered[y][x:x+4]
+									colour = Colour(r, g, b, alpha = a)
+								else:
+									raise Exception("Invalid colour type (caught too late?)")
+
+								self.pixels[y].append(colour)
+						
+				# Adam7 Algorithm (Not Implemented)
+				elif(self.properties["interlace"] == 1):
+					raise NotImplementedError()
+				else:
+					raise Exception("Unexpected interlacing method")
+			else:
+				raise Exception("Unexpected PNG filter method")
 
 		else:
 			raise IOError("File specified is not a PNG")
 
+		print("Done!")
+		for scanline in self.pixels:
+			print([pixel.get() for pixel in scanline])
+
 image = PNG("test.png")
+#image2 = PNG("test2.png")
