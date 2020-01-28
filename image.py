@@ -197,7 +197,16 @@ class PNG:
 								# Apply the difference and multiply by power of bit depth
 								byte = hexadecimal((correspondingByte + int(byte, 16))%(2**8))
 
-							elif(filterType == 2): raise NotImplementedError()
+							# Up filter
+							elif(filterType == 2):
+
+								# Get corresponding byte
+								if(y <= 0): correspondingByte = 0
+								else: correspondingByte = int(unfiltered[y-1][x], 16)
+
+								# Apply the difference and multiply by power of bit depth
+								byte = hexadecimal((correspondingByte + int(byte, 16))%(2**8))
+
 							elif(filterType == 3): raise NotImplementedError()
 							elif(filterType == 4): raise NotImplementedError()
 							else:
@@ -247,4 +256,4 @@ class PNG:
 			print([pixel.get() for pixel in scanline])
 
 image = PNG("test.png")
-#image2 = PNG("test2.png")
+image2 = PNG("test2.png")
