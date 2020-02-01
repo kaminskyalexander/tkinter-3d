@@ -1,11 +1,10 @@
 import tkinter as tk
 from binascii import hexlify
-from image import PNG
+from image_wrapper import BetterImage
 
 root = tk.Tk()
 width = 400
 height = 400
-
 canvas = tk.Canvas(
     root,
     width = width,
@@ -15,17 +14,13 @@ canvas = tk.Canvas(
 )
 canvas.pack(fill = "both", expand = True)
 
-image = PNG("test.png")
-instance = None # Global
+# Create the image
+image = BetterImage("test.png")
 
 def update():
-	global instance
 	image.flip()
-	instance = tk.PhotoImage(data = image.repackage(), format = "png").zoom(50)
-
 	canvas.delete("update")
-	canvas.create_image(0, 0, image = instance, anchor = "nw", tag = "update")
-	
+	canvas.create_image(0, 0, image = image.instance, anchor = "nw", tag = "update")
 	canvas.after(1000, update)
 
 update()
