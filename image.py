@@ -59,8 +59,8 @@ class PNG:
 			"gamma:":           None,
 			"rendering-indent": None
 		}
-		self.data = []
 		self.pixels = []
+		pixelData = []
 
 		# Open the file and convert it to a list of hex values
 		with open(file, "rb") as f:
@@ -101,9 +101,9 @@ class PNG:
 						# Decompress/unzip the IDAT contents
 						imageContent = hexlify(decompress(hexString(*chunkData)))
 						# Since there can be multiple IDAT chunks in one PNG file, we can
-						# append this information to "self.data" and deal with it later...
+						# append this information to fileData and deal with it later...
 						for i in range(0, len(imageContent), 2):
-							self.data.append(
+							pixelData.append(
 								hexadecimal(int(imageContent[i:i+2], 16))
 							)
 
@@ -180,7 +180,7 @@ class PNG:
 					for y in range(self.properties["height"]):
 						data.append([])
 						for x in range(bytesPerRow):
-							data[y].append(self.data[bytesPerRow * y + x])
+							data[y].append(pixelData[bytesPerRow * y + x])
 						#print(data[y])
 
 					# Unfilter the data
@@ -258,9 +258,10 @@ class PNG:
 		else:
 			raise IOError("File specified is not a PNG")
 
-		print("Done!")
-		for scanline in self.pixels:
-			print([pixel.get() for pixel in scanline])
+		# DEBUG: print image contents
+		#print("Done!")
+		# for scanline in self.pixels:
+		# 	print([pixel.get() for pixel in scanline])
 
 	# Return byte string format ready for saving
 	# TODO: Increase efficiency or find alternative method
@@ -319,9 +320,15 @@ class PNG:
 		# Add all the contents to the main data array
 		data.extend([*size, *prefix, *checksum])
 
-		return data
+		return hexString(*data)
 
-image = PNG("test.png")
-repackagedForm = hexString(*image.repackage())
-with open("dump.png", "wb") as png:
-	png.write(repackagedForm)
+	# Test function
+	def flip(self):
+		self.pixels = self.pixels[::-1] 
+
+# Debug
+if(__name__ == "__main__"):
+	image = PNG("test.png")
+	repackagedForm = image.repackage()
+	with open("dump.png", "wb") as png:
+		png.write(repackagedForm)
