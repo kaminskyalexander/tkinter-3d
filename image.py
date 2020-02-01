@@ -263,6 +263,11 @@ class PNG:
 		# for scanline in self.pixels:
 		# 	print([pixel.get() for pixel in scanline])
 
+	@property
+	def width(self): return len(self.pixels[0])
+	@property
+	def height(self): return len(self.pixels)
+
 	# Return byte string format ready for saving
 	# TODO: Increase efficiency or find alternative method
 	def repackage(self):
@@ -274,8 +279,8 @@ class PNG:
 		# Add IHDR image header chunk
 		prefix = ["0x49", "0x48", "0x44", "0x52"]
 		chunk = [
-			*hexSplit(hexadecimal(len(self.pixels[0]), size = 8)), # Width
-			*hexSplit(hexadecimal(len(self.pixels), size = 8)),    # Height
+			*hexSplit(hexadecimal(self.width, size = 8)),  # Width
+			*hexSplit(hexadecimal(self.height, size = 8)), # Height
 			hexadecimal(8), # Bit depth
 			hexadecimal(6), # Color Type (RGBA)
 			hexadecimal(0), # Compression method
@@ -321,10 +326,6 @@ class PNG:
 		data.extend([*size, *prefix, *checksum])
 
 		return hexString(*data)
-
-	# Test function
-	def flip(self):
-		self.pixels = self.pixels[::-1] 
 
 # Debug
 if(__name__ == "__main__"):
