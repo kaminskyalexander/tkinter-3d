@@ -1,4 +1,4 @@
-from setup import *
+from game.setup import *
 
 def flip(vector):
 	x, y, z = vector.x*-1, vector.y*-1, vector.z*-1

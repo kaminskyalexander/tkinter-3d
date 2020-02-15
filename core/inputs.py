@@ -1,5 +1,3 @@
-from setup import root
-
 binds = {
     # Movement ............
     "forward": 87,
@@ -33,7 +31,7 @@ inputs = {
 
 class Inputs:
 
-    def __init__(self):
+    def __init__(self, root):
         self.events = []
 
         root.bind(

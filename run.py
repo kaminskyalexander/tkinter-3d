@@ -1,11 +1,9 @@
-from setup import *
-from inputs import *
-from geometry import polygon, rotate, flip, rotationMatrix
+from game.setup import *
+from core.inputs import *
+from game.geometry import polygon, rotate, flip, rotationMatrix
 
-events = Inputs()
+events = Inputs(root)
 debug = True
-DEBUG_IMAGE = tk.PhotoImage(file = "test.png").zoom(50)
-DEBUG_IMAGE_AMOUNT = 3
 
 def update():
 	start = int(time() * 1000)
@@ -67,13 +65,6 @@ def update():
 		width = 0,
 		tag = "frame"
 	)
-	for i in range(DEBUG_IMAGE_AMOUNT):
-		canvas.create_image(
-			i*150, 0,
-			image = DEBUG_IMAGE,
-			anchor = "nw",
-			tag = "frame"
-		)
 	for i in range(0, 100):
 		polygon(
 			Vector(-0.65, -0.5, (i)/2),
