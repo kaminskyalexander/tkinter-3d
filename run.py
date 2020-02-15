@@ -1,54 +1,42 @@
 from game.setup import *
-from core.inputs import *
+from core.inputs import InputListener
 from game.geometry import polygon, rotate, flip, rotationMatrix
 
-events = Inputs(root)
+inputs = InputListener(root)
 debug = True
 
 def update():
 	start = int(time() * 1000)
 
 	movement = Vector(0, 0, 0)
-	if((binds["forward"], "press") in inputs["keys"]):
-		if((binds["speed"], "press") in inputs["keys"]):
+	inputs.refresh()
+
+	if inputs.key(*binds["forward"]):
+		if inputs.key(*binds["speed"]):
 			movement.z += 0.3
-		else:
-			movement.z += 0.1
-	if((binds["backward"], "press") in inputs["keys"]):
-		movement.z -= 0.1
-	if((binds["left"], "press") in inputs["keys"]):
-		movement.x -= 0.1
-	if((binds["right"], "press") in inputs["keys"]):
-		movement.x += 0.1
-	if((binds["down"], "press") in inputs["keys"]):
-		movement.y -= 0.1
-	if((binds["up"], "press") in inputs["keys"]):
-		movement.y += 0.1
-	if((binds["look-left"], "press") in inputs["keys"]):
-		rotation.y -= 1
-	if((binds["look-right"], "press") in inputs["keys"]):
-		rotation.y += 1
-	if((binds["look-up"], "press") in inputs["keys"]):
-		rotation.x -= 1
-	if((binds["look-down"], "press") in inputs["keys"]):
-		rotation.x += 1
-	if((binds["tilt-left"], "press") in inputs["keys"]):
-		rotation.z += 1
-	if((binds["tilt-right"], "press") in inputs["keys"]):
-		rotation.z -= 1
-	if((binds["reset"], "press") in inputs["keys"]):
+		else: movement.z += 0.1
+	if inputs.key(*binds["backward"]):    movement.z -= 0.1
+	if inputs.key(*binds["left"]):        movement.x -= 0.1
+	if inputs.key(*binds["right"]):       movement.x += 0.1
+	if inputs.key(*binds["down"]):        movement.y -= 0.1
+	if inputs.key(*binds["up"]):          movement.y += 0.1
+     
+	if inputs.key(*binds["look-up"]):       rotation.x -= 1
+	if inputs.key(*binds["look-down"]):     rotation.x += 1
+	if inputs.key(*binds["look-left"]):     rotation.y -= 1
+	if inputs.key(*binds["look-right"]):    rotation.y += 1
+	if inputs.key(*binds["tilt-left"]):     rotation.z += 1
+	if inputs.key(*binds["tilt-right"]):    rotation.z -= 1
+		
+	if inputs.key(*binds["camoffset-up"]):    offset.y += 5
+	if inputs.key(*binds["camoffset-down"]):  offset.y -= 5
+	if inputs.key(*binds["camoffset-left"]):  offset.x += 5
+	if inputs.key(*binds["camoffset-right"]): offset.x -= 5
+
+	if inputs.key(*binds["reset"]):
 		camera.assign(Vector(0, 0, 0))
 		rotation.assign(Vector(0, 0, 0))
 		offset.assign(Vector(0, 0, 0))
-	if((binds["camoffset-up"], "press") in inputs["keys"]):
-		offset.y += 5
-	if((binds["camoffset-down"], "press") in inputs["keys"]):
-		offset.y -= 5
-	if((binds["camoffset-left"], "press") in inputs["keys"]):
-		offset.x += 5
-	if((binds["camoffset-right"], "press") in inputs["keys"]):
-		offset.x -= 5
-	
 
 	movement = rotate(movement, rotationMatrix(flip(rotation)))
 	camera.add(movement)
@@ -104,7 +92,6 @@ def update():
 		)
 
 	canvas.tag_raise("debug")
-	events.update()
 	wait = int(time() * 1000) - start
 	rate = 1000 // framerate
 	delay = rate - wait if rate - wait < rate else rate
