@@ -5,30 +5,36 @@ class Vector:
 		self.y = y
 		self.z = z
 
-	def add(self, vector):
-		self.x += vector.x
-		self.y += vector.y
-		self.z += vector.z
+	def __add__(self, other):
+		return Vector(
+			self.x + other.x,
+			self.y + other.y,
+			self.z + other.z
+		)
 
-	def subtract(self, vector):
-		self.x -= vector.x
-		self.y -= vector.y
-		self.z -= vector.z
+	def __sub__(self, other):
+		return Vector(
+			self.x - other.x,
+			self.y - other.y,
+			self.z - other.z
+		)
 
-	def multiply(self, vector):
-		self.x *= vector.x
-		self.y *= vector.y
-		self.z *= vector.z
-	
-	def divide(self, vector):
-		self.x /= vector.x
-		self.y /= vector.y
-		self.z /= vector.z
+	def __mul__(self, other):
+		return Vector(
+			self.x * other.x,
+			self.y * other.y,
+			self.z * other.z
+		)
 
-	def assign(self, vector):
-		self.x = vector.x
-		self.y = vector.y
-		self.z = vector.z
+	def __truediv__(self, other):
+		return Vector(
+			self.x / other.x,
+			self.y / other.y,
+			self.z / other.z
+		)
+
+	def __str__(self):
+		return "({}, {}, {})".format(self.x, self.y, self.z)
 
 	def get(self): 
 		return self.x, self.y, self.z

@@ -149,17 +149,17 @@ def cull(*args):
 # Takes in vectors as arguments and effects to apply
 # to the shape as keyword arguments in the same format
 # as Tkinter's canvas.create_polygon()
-def polygon(*args, debug = False, **kwargs):
-
+def polygon(camera, rotation, *args, debug = False, **kwargs):
 	# Find the rotation matrix and apply it onto all points
 	matrix = rotationMatrix(rotation)
-	for vector in args:
-		# Apply the camera position to each point
-		vector.subtract(camera)
+	verticies = []
+	for vertex in args:
+		# Apply camera position
+		vertex -= camera
 		# Apply rotation
-		vector.assign(rotate(vector, matrix))
+		verticies.append(rotate(vertex, matrix))
 
-	verticies = cull(*args)
+	verticies = cull(*verticies)
 	if(verticies):
 
 		# Debug text

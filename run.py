@@ -6,6 +6,8 @@ inputs = InputListener(root)
 debug = True
 
 def update():
+	global camera, rotation, offset
+
 	start = int(time() * 1000)
 
 	movement = Vector(0, 0, 0)
@@ -34,12 +36,12 @@ def update():
 	if inputs.key(*binds["camoffset-right"]): offset.x -= 5
 
 	if inputs.key(*binds["reset"]):
-		camera.assign(Vector(0, 0, 0))
-		rotation.assign(Vector(0, 0, 0))
-		offset.assign(Vector(0, 0, 0))
+		camera = Vector(0, 0, 0)
+		rotation = Vector(0, 0, 0)
+		offset = Vector(0, 0, 0)
 
 	movement = rotate(movement, rotationMatrix(flip(rotation)))
-	camera.add(movement)
+	camera += movement
 
 	#makeshift fix :)
 	if(camera.z > 34):
@@ -55,6 +57,7 @@ def update():
 	)
 	for i in range(0, 100):
 		polygon(
+			camera, rotation,
 			Vector(-0.65, -0.5, (i)/2),
 			Vector(-0.45, -0.5, (i)/2),
 			Vector(-0.45, -0.5, (i+1)/2),
@@ -62,6 +65,7 @@ def update():
 			fill = "darkred" if i % 2 == 0 else "#ddd"
 		)
 		polygon(
+			camera, rotation,
 			Vector( 0.45, -0.5, (i)/2),
 			Vector( 0.65, -0.5, (i)/2),
 			Vector( 0.65, -0.5, (i+1)/2),
@@ -70,6 +74,7 @@ def update():
 		)
 	for i in range(0, 50):
 		polygon(
+			camera, rotation,
 			Vector(-0.5, -0.5, i),
 			Vector( 0.5, -0.5, i),
 			Vector( 0.5, -0.5, i + 1),
@@ -77,6 +82,7 @@ def update():
 			fill = "#666" if i % 2 == 0 else "#555"
 		)
 		polygon(
+			camera, rotation,
 			Vector(-0.6, -0.5, i),
 			Vector( -200, -0.5, i),
 			Vector( -200, -0.5, i + 1),
@@ -84,6 +90,7 @@ def update():
 			fill = "green" if i % 2 == 0 else "darkgreen"
 		)
 		polygon(
+			camera, rotation,
 			Vector(0.6, -0.5, i),
 			Vector( 200, -0.5, i),
 			Vector( 200, -0.5, i + 1),
