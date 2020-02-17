@@ -1,4 +1,5 @@
 from game.setup import *
+from core.util import getNeighbours
 
 def flip(vector):
 	x, y, z = vector.x*-1, vector.y*-1, vector.z*-1
@@ -73,21 +74,8 @@ def rotate(vector, matrix):
 	)
 	return new
 
-def getNeighbours(index, verticies):
-	neighbours = []
-	if(index > 0):
-		neighbours.append(verticies[index - 1])
-	else:
-		neighbours.append(verticies[len(verticies) - 1])
-
-	if(index < len(verticies) - 1):
-		neighbours.append(verticies[index + 1])
-	else:
-		neighbours.append(verticies[0])
-	return neighbours
-
 def cull(*args):
-	verticies = args[:]
+	vertices = args[:]
 	# How close to the screen should objects be culled
 	cutoff = 0.25
 	# How far away from the screen objects should be culled
@@ -107,17 +95,17 @@ def cull(*args):
 
 	for direction in planes:
 		new = []
-		for i, vertex in enumerate(verticies):
-			neighbours = getNeighbours(i, verticies)
+		for i, vertex in enumerate(vertices):
+			neighbours = getNeighbours(i, vertices)
 
 			# Detect if the vertex is outside the frustum (viewable area)
 			if(
-				(direction == "behind" and verticies[i].z <  cutoff) or
-				(direction == "ahead"  and verticies[i].z >  renderDistance) or
-				(direction == "top"    and verticies[i].y >  verticies[i].z) or
-				(direction == "bottom" and verticies[i].y < -verticies[i].z) or
-				(direction == "left"   and verticies[i].x*widthRatio < -verticies[i].z) or
-				(direction == "right"  and verticies[i].x*widthRatio >  verticies[i].z)
+				(direction == "behind" and vertices[i].z <  cutoff) or
+				(direction == "ahead"  and vertices[i].z >  renderDistance) or
+				(direction == "top"    and vertices[i].y >  vertices[i].z) or
+				(direction == "bottom" and vertices[i].y < -vertices[i].z) or
+				(direction == "left"   and vertices[i].x*widthRatio < -vertices[i].z) or
+				(direction == "right"  and vertices[i].x*widthRatio >  vertices[i].z)
 			):
 				for neighbour in neighbours:
 					# Detect if the vertex has a neighbouring point inside the frustum
@@ -135,13 +123,13 @@ def cull(*args):
 						new.append(
 							intersection(
 								*planes[direction], 
-								*verticies[i].get(),
+								*vertices[i].get(),
 								*neighbour.get()
 							)
 						)
-			else: new.append(verticies[i])
+			else: new.append(vertices[i])
 		# Reset the state for the next direction
-		verticies = new[:]
+		vertices = new[:]
 
 	return new
 
@@ -150,29 +138,28 @@ def cull(*args):
 # to the shape as keyword arguments in the same format
 # as Tkinter's canvas.create_polygon()
 def polygon(camera, rotation, *args, debug = False, **kwargs):
+	args = list(args)
+	
 	# Find the rotation matrix and apply it onto all points
 	matrix = rotationMatrix(rotation)
-	verticies = []
-	for vertex in args:
-		# Apply camera position
-		vertex -= camera
-		# Apply rotation
-		verticies.append(rotate(vertex, matrix))
+	for i, vertex in enumerate(args):
+		# Apply camera position and rotation
+		args[i] = rotate(vertex - camera, matrix)
 
-	verticies = cull(*verticies)
-	if(verticies):
+	vertices = cull(*args)
+	if(vertices):
 
 		# Debug text
 		if(debug):
 			DEBUG_TEXT = ""
-			for vertex in verticies:
+			for vertex in vertices:
 				DEBUG_TEXT += (
 					str(vertex.x) + "\n" + 
 					str(vertex.y) + "\n" +
 					str(vertex.z) + "\n\n"
 				)
 			canvas.create_text(
-				pointToPixel(flatten(verticies[0])),
+				pointToPixel(flatten(vertices[0])),
 				text = DEBUG_TEXT,
 				font = ("System", 11, ""),
 				tag = ("frame", "debug")
@@ -180,7 +167,7 @@ def polygon(camera, rotation, *args, debug = False, **kwargs):
 		
 		# Draw the shape
 		return canvas.create_polygon(
-			[pointToPixel(flatten(vertex)) for vertex in verticies],
+			[pointToPixel(flatten(vertex)) for vertex in vertices],
 			kwargs,
 			tag = "frame"
 		)

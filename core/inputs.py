@@ -50,3 +50,15 @@ class InputListener:
 		if((keycode, state) in self.inputs["keys"]):
 			return True
 		return False
+
+	def button(self, button, state):
+		if((button, state) in self.inputs["buttons"]):
+			return True
+		return False
+
+	@property
+	def keys(self): return self.inputs["keys"]
+	@property
+	def buttons(self): return self.inputs["buttons"]
+	@property
+	def motion(self): return self.inputs["motion"]

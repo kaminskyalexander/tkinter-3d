@@ -128,7 +128,7 @@ Framerate Info:
 			),
 			font = ("System", 11, ""),
 			anchor = "nw",
-			tag = ("frame", debug)
+			tag = ("frame", "debug")
 		)
 
 	canvas.after(delay,	update)
