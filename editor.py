@@ -8,32 +8,48 @@ debug = True
 vertices = []
 ROAD_WIDTH = 50
 
+camera = Vector(0, 0, 0)
+
 def update():
-	global rotation
+	global camera
 	start = int(time() * 1000)
 
 	inputs.refresh()
 	canvas.delete("frame")
 
-	if inputs.key(82, "press"): vertices.clear() # R to reset
-
+	# Left click: Add vertex
 	if inputs.button(1, "release"):
-		vertices.append(inputs.motion)
+		vertices.append(
+			(
+				inputs.motion[0] + camera.x,
+				inputs.motion[1] + camera.y
+			)
+		)
+		
+	# R to reset
+	if inputs.key(82, "press"):
+		vertices.clear()
+		camera = Vector(0, 0, 0)
+
+	if inputs.key(87, "press"): camera.y -= 10 # W: Up
+	if inputs.key(65, "press"): camera.x -= 10 # A: Left    
+	if inputs.key(83, "press"): camera.y += 10 # S: Down
+	if inputs.key(68, "press"): camera.x += 10 # D: Right
 
 	edges = []
 
 	for i, vertex in enumerate(vertices):
 		canvas.create_oval(
-			vertex[0] - 5, vertex[1] - 5,
-			vertex[0] + 5, vertex[1] + 5,
+			vertex[0] - 5 - camera.x, vertex[1] - 5 - camera.y,
+			vertex[0] + 5 - camera.x, vertex[1] + 5 - camera.y,
 			fill = "green" if i == 0 else "red",
 			tag = ("frame", "vertex")
 		)
 		
 		prevPoint = vertices[i-1] if i != 0 else vertices[-1]
 		canvas.create_line(
-			vertex[0], vertex[1],
-			prevPoint[0], prevPoint[1],
+			vertex[0] - camera.x, vertex[1] - camera.y,
+			prevPoint[0] - camera.x, prevPoint[1] - camera.y,
 			fill = "white",
 			tag = ("frame", "line")
 		)
@@ -71,10 +87,10 @@ def update():
 	for i, edge in enumerate(edges):
 		canvas.create_polygon(
 			sortQuad(
-				(edges[i][0][0],   edges[i][0][1]),
-				(edges[i][1][0],   edges[i][1][1]),
-				(edges[i-1][1][0], edges[i-1][1][1]),
-				(edges[i-1][0][0], edges[i-1][0][1]),
+				(edges[i][0][0]-camera.x,   edges[i][0][1]-camera.y),
+				(edges[i][1][0]-camera.x,   edges[i][1][1]-camera.y),
+				(edges[i-1][1][0]-camera.x, edges[i-1][1][1]-camera.y),
+				(edges[i-1][0][0]-camera.x, edges[i-1][0][1]-camera.y),
 			),
 			fill = "gray",
 			outline = "red",
@@ -101,12 +117,15 @@ Limit: {}
 Wait: {}
 Rate: {}
 Delay: {}
+---
+Camera: {}
 """.format(
 				inputs.inputs,
 				framerate,
 				wait,
 				rate,
-				delay
+				delay,
+				camera
 			),
 			font = ("Consolas", 11, ""),
 			fill = "white",
