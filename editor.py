@@ -1,7 +1,6 @@
 from game.editor.setup import *
 from core.inputs import InputListener
-from core.util import getNeighbours
-from math import *
+from core.util import getNeighbours, sortQuad
 
 inputs = InputListener(root)
 debug = True
@@ -70,28 +69,18 @@ def update():
 		edges.append(((x1, y1), (x2, y2)))
 
 	for i, edge in enumerate(edges):
-		if i != 0:
-			canvas.create_polygon(
-				edges[i][0][0],   edges[i][0][1],
-				edges[i][1][0],   edges[i][1][1],
-				edges[i-1][1][0], edges[i-1][1][1],
-				edges[i-1][0][0], edges[i-1][0][1],
-				fill = "gray",
-				outline = "red",
-				width = 2,
-				tag = "frame"
-			)
-		else:
-			canvas.create_polygon(
-				edges[i][0][0],   edges[i][0][1],
-				edges[i][1][0],   edges[i][1][1],
-				edges[-1][0][0], edges[-1][0][1],
-				edges[-1][1][0], edges[-1][1][1],
-				fill = "gray",
-				outline = "red",
-				width = 2,
-				tag = "frame"
-			)
+		canvas.create_polygon(
+			sortQuad(
+				(edges[i][0][0],   edges[i][0][1]),
+				(edges[i][1][0],   edges[i][1][1]),
+				(edges[i-1][1][0], edges[i-1][1][1]),
+				(edges[i-1][0][0], edges[i-1][0][1]),
+			),
+			fill = "gray",
+			outline = "red",
+			width = 2,
+			tag = "frame"
+		)
 
 
 	canvas.tag_raise("vertex")

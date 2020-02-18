@@ -1,5 +1,6 @@
 import tkinter as tk
 from time import time, sleep
+from math import pi, cos, sin, atan
 from core.vector import Vector
 
 root = tk.Tk()
