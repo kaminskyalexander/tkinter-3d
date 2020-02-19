@@ -5,31 +5,59 @@ from core.util import getNeighbours, sortQuad
 inputs = InputListener(root)
 debug = True
 
-vertices = []
+vertices = [(0, 0)]
 ROAD_WIDTH = 50
 
-camera = Vector(0, 0, 0)
+camera = Vector(-width/2, -height/2, 0)
+
+def gridBg(size):
+	global camera
+	width = canvas.winfo_width()
+	height = canvas.winfo_height()
+
+	for y in range(int(height/size) + 2):
+		for x in range(int(width/size) + 2):
+			canvas.create_rectangle(
+				(x)*size - camera.x%size, y*size - camera.y%size,
+				(x+1)*size - camera.x%size, (y+1)*size - camera.y%size,
+				fill = "",
+				outline = "#333",
+				tag = ("frame", "grid")
+			)
+
+def snap(x, interval = 50):
+    return interval * round(x/interval)
 
 def update():
 	global camera
+	global vertices
 	start = int(time() * 1000)
 
 	inputs.refresh()
 	canvas.delete("frame")
 
+	gridBg(50)
+
+	cursor = snap(inputs.motion[0] + camera.x), snap(inputs.motion[1] + camera.y)
+	canvas.create_oval(
+		cursor[0] - 5 - camera.x, cursor[1] - 5 - camera.y,
+		cursor[0] + 5 - camera.x, cursor[1] + 5 - camera.y,
+		fill = "white",
+		tag = ("frame", "cursor")
+	)
+
 	# Left click: Add vertex
 	if inputs.button(1, "release"):
-		vertices.append(
-			(
-				inputs.motion[0] + camera.x,
-				inputs.motion[1] + camera.y
-			)
-		)
-		
+		vertices.append(cursor)
+
 	# R to reset
 	if inputs.key(82, "press"):
-		vertices.clear()
-		camera = Vector(0, 0, 0)
+		vertices = [(0, 0)]
+		camera = Vector(-width/2, -height/2, 0)
+
+	# Ctrl+Z to undo
+	if inputs.key(17, "press") and inputs.key(90, "release"):
+		if len(vertices) > 1: del vertices[-1]
 
 	if inputs.key(87, "press"): camera.y -= 10 # W: Up
 	if inputs.key(65, "press"): camera.x -= 10 # A: Left    
@@ -92,14 +120,15 @@ def update():
 				(edges[i-1][1][0]-camera.x, edges[i-1][1][1]-camera.y),
 				(edges[i-1][0][0]-camera.x, edges[i-1][0][1]-camera.y),
 			),
-			fill = "gray",
-			outline = "red",
-			width = 2,
+			fill = "#444" if i%2 == 0 else "#666",
+			outline = "lightgray",
 			tag = "frame"
 		)
 
 
+	canvas.tag_raise("line")
 	canvas.tag_raise("vertex")
+	canvas.tag_raise("cursor")
 	canvas.tag_raise("debug")
 
 	wait = int(time() * 1000) - start

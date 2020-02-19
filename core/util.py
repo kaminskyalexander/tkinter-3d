@@ -28,5 +28,3 @@ def sortQuad(p1, p2, p3, p4):
 	bottom.reverse()
 
 	return [*top, *bottom]
-
-print(sortQuad((1, 1), (2, 2), (2, 1), (1, 2)))
