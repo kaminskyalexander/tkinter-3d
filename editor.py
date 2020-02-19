@@ -1,7 +1,6 @@
 from game.editor.setup import *
 from core.inputs import InputListener
 from core.util import getNeighbours, sortQuad
-from time import sleep
 
 inputs = InputListener(root)
 debug = True
@@ -56,14 +55,9 @@ def update():
 		vertices = [(0, 0)]
 		camera = Vector(-width/2, -height/2, 0)
 
-
 	# Ctrl+Z to undo
-	undo = False
-	if inputs.key(17, "press") and inputs.key(90, "press"):
-		if len(vertices) > 1: 
-			del vertices[-1]
-			undo = True
-		
+	if inputs.key(17, "press") and inputs.key(90, "release"):
+		if len(vertices) > 1: del vertices[-1]
 
 	if inputs.key(87, "press"): camera.y -= 10 # W: Up
 	if inputs.key(65, "press"): camera.x -= 10 # A: Left    
@@ -167,8 +161,6 @@ Camera: {}
 			anchor = "nw",
 			tag = ("frame", "debug")
 		)
-	if(undo):
-		sleep(0.1)
 
 	canvas.after(delay,	update)
 
