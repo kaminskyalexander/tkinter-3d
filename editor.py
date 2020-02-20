@@ -1,4 +1,5 @@
 from game.editor.setup import *
+from game.editor.export import export
 from core.inputs import InputListener
 from core.util import getNeighbours, sortQuad
 
@@ -63,6 +64,11 @@ def update():
 	if inputs.key(65, "press"): camera.x -= 10 # A: Left    
 	if inputs.key(83, "press"): camera.y += 10 # S: Down
 	if inputs.key(68, "press"): camera.x += 10 # D: Right
+
+	# Export ctrl+e
+	if inputs.key(17, "press") and inputs.key(69, "trigger"):
+		export("Track.json", {"points": vertices})
+		tk.Label(tk.Toplevel(root), text = "Export success!", font = ("Arial", 25, "")).pack()
 
 	edges = []
 
