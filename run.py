@@ -1,57 +1,13 @@
 from game.setup import *
 from core.inputs import InputListener
 from game.geometry import rotate, flip, rotationMatrix
-from game.polygon import Polygon
-from game.world import World
+from game.world import Racetrack
 
 inputs = InputListener(root)
 debug = True
 
-# Create the world
-polygons = []
-for i in range(0, 100):
-	polygons.append(Polygon(
-		canvas,
-		Vector(-0.65, -0.5, (i)/2),
-		Vector(-0.45, -0.5, (i)/2),
-		Vector(-0.45, -0.5, (i+1)/2),
-		Vector(-0.65, -0.5, (i+1)/2),
-		fill = "darkred" if i % 2 == 0 else "#ddd"
-	))
-	polygons.append(Polygon(
-		canvas,
-		Vector( 0.45, -0.5, (i)/2),
-		Vector( 0.65, -0.5, (i)/2),
-		Vector( 0.65, -0.5, (i+1)/2),
-		Vector( 0.45, -0.5, (i+1)/2),
-		fill = "darkred" if i % 2 == 0 else "#ddd"
-	))
-for i in range(0, 50):
-	polygons.append(Polygon(
-		canvas,
-		Vector(-0.5, -0.5, i),
-		Vector( 0.5, -0.5, i),
-		Vector( 0.5, -0.5, i + 1),
-		Vector(-0.5, -0.5, i + 1),
-		fill = "#666" if i % 2 == 0 else "#555"
-	))
-	polygons.append(Polygon(
-		canvas,
-		Vector(-0.6, -0.5, i),
-		Vector( -200, -0.5, i),
-		Vector( -200, -0.5, i + 1),
-		Vector(-0.6, -0.5, i + 1),
-		fill = "green" if i % 2 == 0 else "darkgreen"
-	))
-	polygons.append(Polygon(
-		canvas,
-		Vector(0.6, -0.5, i),
-		Vector( 200, -0.5, i),
-		Vector( 200, -0.5, i + 1),
-		Vector(0.6, -0.5, i + 1),
-		fill = "green" if i % 2 == 0 else "darkgreen"
-	))
-world = World(*polygons)
+with open("Track.json", "r") as f:
+	world = Racetrack(canvas, loads(f.read()))
 
 def update():
 	global camera, rotation, offset
