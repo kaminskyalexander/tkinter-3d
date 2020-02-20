@@ -47,16 +47,16 @@ def update():
 	)
 
 	# Left click: Add vertex
-	if inputs.button(1, "release"):
+	if inputs.button(1, "trigger"):
 		vertices.append(cursor)
 
 	# R to reset
-	if inputs.key(82, "press"):
+	if inputs.key(82, "trigger"):
 		vertices = [(0, 0)]
 		camera = Vector(-width/2, -height/2, 0)
 
 	# Ctrl+Z to undo
-	if inputs.key(17, "press") and inputs.key(90, "release"):
+	if inputs.key(17, "press") and inputs.key(90, "trigger"):
 		if len(vertices) > 1: del vertices[-1]
 
 	if inputs.key(87, "press"): camera.y -= 10 # W: Up
