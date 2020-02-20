@@ -133,6 +133,7 @@ def cull(*args):
 
 	return new
 
+# **** DEPRECATED AND LESS EFFICIENT *****
 # Draws a polygon in 3D space
 # Takes in vectors as arguments and effects to apply
 # to the shape as keyword arguments in the same format

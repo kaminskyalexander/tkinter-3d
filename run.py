@@ -1,9 +1,57 @@
 from game.setup import *
 from core.inputs import InputListener
-from game.geometry import polygon, rotate, flip, rotationMatrix
+from game.geometry import rotate, flip, rotationMatrix
+from game.polygon import Polygon
+from game.world import World
 
 inputs = InputListener(root)
 debug = True
+
+# Create the world
+polygons = []
+for i in range(0, 100):
+	polygons.append(Polygon(
+		canvas,
+		Vector(-0.65, -0.5, (i)/2),
+		Vector(-0.45, -0.5, (i)/2),
+		Vector(-0.45, -0.5, (i+1)/2),
+		Vector(-0.65, -0.5, (i+1)/2),
+		fill = "darkred" if i % 2 == 0 else "#ddd"
+	))
+	polygons.append(Polygon(
+		canvas,
+		Vector( 0.45, -0.5, (i)/2),
+		Vector( 0.65, -0.5, (i)/2),
+		Vector( 0.65, -0.5, (i+1)/2),
+		Vector( 0.45, -0.5, (i+1)/2),
+		fill = "darkred" if i % 2 == 0 else "#ddd"
+	))
+for i in range(0, 50):
+	polygons.append(Polygon(
+		canvas,
+		Vector(-0.5, -0.5, i),
+		Vector( 0.5, -0.5, i),
+		Vector( 0.5, -0.5, i + 1),
+		Vector(-0.5, -0.5, i + 1),
+		fill = "#666" if i % 2 == 0 else "#555"
+	))
+	polygons.append(Polygon(
+		canvas,
+		Vector(-0.6, -0.5, i),
+		Vector( -200, -0.5, i),
+		Vector( -200, -0.5, i + 1),
+		Vector(-0.6, -0.5, i + 1),
+		fill = "green" if i % 2 == 0 else "darkgreen"
+	))
+	polygons.append(Polygon(
+		canvas,
+		Vector(0.6, -0.5, i),
+		Vector( 200, -0.5, i),
+		Vector( 200, -0.5, i + 1),
+		Vector(0.6, -0.5, i + 1),
+		fill = "green" if i % 2 == 0 else "darkgreen"
+	))
+world = World(*polygons)
 
 def update():
 	global camera, rotation, offset
@@ -48,6 +96,7 @@ def update():
 		camera.z = 0
 
 	canvas.delete("frame")
+
 	# background
 	canvas.create_rectangle(
 		0, 0, canvas.winfo_width(), canvas.winfo_height(),
@@ -55,48 +104,9 @@ def update():
 		width = 0,
 		tag = "frame"
 	)
-	for i in range(0, 100):
-		polygon(
-			camera, rotation,
-			Vector(-0.65, -0.5, (i)/2),
-			Vector(-0.45, -0.5, (i)/2),
-			Vector(-0.45, -0.5, (i+1)/2),
-			Vector(-0.65, -0.5, (i+1)/2),
-			fill = "darkred" if i % 2 == 0 else "#ddd"
-		)
-		polygon(
-			camera, rotation,
-			Vector( 0.45, -0.5, (i)/2),
-			Vector( 0.65, -0.5, (i)/2),
-			Vector( 0.65, -0.5, (i+1)/2),
-			Vector( 0.45, -0.5, (i+1)/2),
-			fill = "darkred" if i % 2 == 0 else "#ddd"
-		)
-	for i in range(0, 50):
-		polygon(
-			camera, rotation,
-			Vector(-0.5, -0.5, i),
-			Vector( 0.5, -0.5, i),
-			Vector( 0.5, -0.5, i + 1),
-			Vector(-0.5, -0.5, i + 1),
-			fill = "#666" if i % 2 == 0 else "#555"
-		)
-		polygon(
-			camera, rotation,
-			Vector(-0.6, -0.5, i),
-			Vector( -200, -0.5, i),
-			Vector( -200, -0.5, i + 1),
-			Vector(-0.6, -0.5, i + 1),
-			fill = "green" if i % 2 == 0 else "darkgreen"
-		)
-		polygon(
-			camera, rotation,
-			Vector(0.6, -0.5, i),
-			Vector( 200, -0.5, i),
-			Vector( 200, -0.5, i + 1),
-			Vector(0.6, -0.5, i + 1),
-			fill = "green" if i % 2 == 0 else "darkgreen"
-		)
+
+	matrix = rotationMatrix(rotation)
+	world.draw(camera, matrix)
 
 	canvas.tag_raise("debug")
 	wait = int(time() * 1000) - start
