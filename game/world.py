@@ -4,12 +4,21 @@ from core.util import getNeighbours, sortQuad
 
 class World:
 
+	@staticmethod
+	def painter(polygon):
+		return polygon.distance
+
 	def __init__(self, *polygons):
-		self.mesh = polygons
+		self.mesh = list(polygons)
 
 	def draw(self, translation, rotation):
 		for polygon in self.mesh:
-			polygon.draw(translation, rotation)
+			polygon.apply(translation, rotation)
+			
+		self.mesh.sort(key = World.painter, reverse = True)
+		
+		for polygon in self.mesh:
+			polygon.draw()
 
 class Racetrack(World):
 
@@ -69,58 +78,3 @@ class Racetrack(World):
 			polygons.append(Polygon(canvas, *vertices, fill = "#666" if i % 2 == 0 else "#555"))
 
 		super().__init__(*polygons)
-
-
-
-
-
-
-
-
-
-
-# # Create the world
-# polygons = []
-# for i in range(0, 100):
-# 	polygons.append(Polygon(
-# 		canvas,
-# 		Vector(-0.65, -0.5, (i)/2),
-# 		Vector(-0.45, -0.5, (i)/2),
-# 		Vector(-0.45, -0.5, (i+1)/2),
-# 		Vector(-0.65, -0.5, (i+1)/2),
-# 		fill = "darkred" if i % 2 == 0 else "#ddd"
-# 	))
-# 	polygons.append(Polygon(
-# 		canvas,
-# 		Vector( 0.45, -0.5, (i)/2),
-# 		Vector( 0.65, -0.5, (i)/2),
-# 		Vector( 0.65, -0.5, (i+1)/2),
-# 		Vector( 0.45, -0.5, (i+1)/2),
-# 		fill = "darkred" if i % 2 == 0 else "#ddd"
-# 	))
-# for i in range(0, 50):
-# 	polygons.append(Polygon(
-# 		canvas,
-# 		Vector(-0.5, -0.5, i),
-# 		Vector( 0.5, -0.5, i),
-# 		Vector( 0.5, -0.5, i + 1),
-# 		Vector(-0.5, -0.5, i + 1),
-# 		fill = "#666" if i % 2 == 0 else "#555"
-# 	))
-# 	polygons.append(Polygon(
-# 		canvas,
-# 		Vector(-0.6, -0.5, i),
-# 		Vector( -200, -0.5, i),
-# 		Vector( -200, -0.5, i + 1),
-# 		Vector(-0.6, -0.5, i + 1),
-# 		fill = "green" if i % 2 == 0 else "darkgreen"
-# 	))
-# 	polygons.append(Polygon(
-# 		canvas,
-# 		Vector(0.6, -0.5, i),
-# 		Vector( 200, -0.5, i),
-# 		Vector( 200, -0.5, i + 1),
-# 		Vector(0.6, -0.5, i + 1),
-# 		fill = "green" if i % 2 == 0 else "darkgreen"
-# 	))
-# world = World(*polygons)
