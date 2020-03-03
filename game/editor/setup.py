@@ -18,3 +18,13 @@ canvas = tk.Canvas(
 canvas.pack(fill = "both", expand = True)
 
 binds = {}
+
+debugTemplate = """\
+Racetrack Editor / Test
+Inputs: {}
+Limit: {}
+Wait: {}
+Rate: {}
+Delay: {}
+Camera: {}
+"""
