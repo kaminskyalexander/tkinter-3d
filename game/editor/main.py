@@ -102,8 +102,31 @@ class Editor:
 		self.world = Racetrack()
 		self.cursor = Cursor(0, 0)
 
+	def export(self, filepath = "Track.json"):
+		with open(filepath, "w") as f:
+			contents = {"points": []}
+			# Convert vector to list of points
+			for point in self.world.path:
+				contents["points"].append((point.x, point.y))
+			f.write(dumps(contents))
+
 	def update(self):
 		self.world.draw(self.camera)
+
+		# Draw the grid
+		size = 50
+		width = canvas.winfo_width()
+		height = canvas.winfo_height()
+
+		for y in range(int(height/size) + 2):
+			for x in range(int(width/size) + 2):
+				canvas.create_rectangle(
+					(x)*size   - self.camera.x%size, y*size     - self.camera.y%size,
+					(x+1)*size - self.camera.x%size, (y+1)*size - self.camera.y%size,
+					fill = "",
+					outline = "#333",
+					tag = ("frame", "grid")
+				)
 
 		# Get cursor position
 		self.cursor.x = self.inputs.motion[0]
@@ -127,25 +150,15 @@ class Editor:
 		if self.inputs.key(17, "press") and self.inputs.key(90, "trigger"):
 			if len(self.world.path) > 1: del self.world.path[-1]
 
+		# Ctrl+E to export level
+		if self.inputs.key(17, "press") and self.inputs.key(69, "trigger"):
+			self.export()
+			popup.showinfo("Export", "Exported to file level.json")
+
 		if self.inputs.key(87, "press"): self.camera.y -= 10 # W: Up
 		if self.inputs.key(65, "press"): self.camera.x -= 10 # A: Left
 		if self.inputs.key(83, "press"): self.camera.y += 10 # S: Down
 		if self.inputs.key(68, "press"): self.camera.x += 10 # D: Right
-
-		# Draw the grid
-		size = 50
-		width = canvas.winfo_width()
-		height = canvas.winfo_height()
-
-		for y in range(int(height/size) + 2):
-			for x in range(int(width/size) + 2):
-				canvas.create_rectangle(
-					(x)*size   - self.camera.x%size, y*size     - self.camera.y%size,
-					(x+1)*size - self.camera.x%size, (y+1)*size - self.camera.y%size,
-					fill = "",
-					outline = "#333",
-					tag = ("frame", "grid")
-				)
 
 		canvas.tag_raise("road")
 		canvas.tag_raise("node")
