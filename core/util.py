@@ -43,14 +43,17 @@ def find2dLineAngle(vector1, vector2):
 
 	return theta
 
-def rotate2dLine(line, degrees):
+def rotate2dLine(line, degrees, origin = None):
 	angle = degrees*pi/180
 
 	x1, y1 = line[0]
 	x2, y2 = line[1]
 
-	mx = (x1 + x2) / 2
-	my = (y1 + y2) / 2
+	if origin != None:
+		mx, my = origin
+	else:
+		mx = (x1 + x2) / 2
+		my = (y1 + y2) / 2
 
 	# Use a rotation matrix, centering the point to (0, 0)
 	rotated = (

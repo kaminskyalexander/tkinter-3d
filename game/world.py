@@ -1,6 +1,6 @@
 from game.setup import *
 from game.polygon import Polygon
-from core.util import getNeighbours, sortQuad
+from core.util import getNeighbours, sortQuad, angleAverage, find2dLineAngle, rotate2dLine
 
 class World:
 
@@ -14,67 +14,94 @@ class World:
 	def draw(self, translation, rotation):
 		for polygon in self.mesh:
 			polygon.apply(translation, rotation)
-			
+
 		self.mesh.sort(key = World.painter, reverse = True)
-		
+
 		for polygon in self.mesh:
 			polygon.draw()
 
 class Racetrack(World):
 
-	def __init__(self, canvas, level, altitude = -0.25, width = 50):
-		
-		# Create track mesh:
-		points = level["points"]
-		edges = []
-		polygons = []
+	def __init__(self, canvas, level, altitude = -0.25, roadWidth = 1.25, bumperWidth = 0.1, bumperAngle = 0):
 
-		for i, point in enumerate(points):
-			rotate = True
+		# Get the path of the road from the level
+		path = []
+		for point in level["points"]:
+			path.append(Vector(point[0]/100, point[1]/100, 0))
 
-			if len(points) > 1:
-				previous, after = getNeighbours(i, points)
+		# Get the mesh coordinates for the racetrack
+		edges = {"road": [], "bumper-left": [], "bumper-right": []}
+		for i, point in enumerate(path):
+			# Get list neighbours
+			before, after = getNeighbours(i, path)
 
-				xdiff1 = previous[0] - point[0]
-				ydiff1 = previous[1] - point[1]
-				xdiff2 = point[0]    - after[0]
-				ydiff2 = point[1]    - after[1]
+			# Find the average angle of the two lines
+			angle = angleAverage(find2dLineAngle(before, point), find2dLineAngle(point, after))
+			# Make the angle perpendicular to the road
+			angle += 90
 
-				if(xdiff1 == 0 or xdiff2 == 0):
-					rotate = False
-					angle = 0
-
-				else:
-					# If slope of one line is positive and the other lines slope is negative
-					if (ydiff1/xdiff1 > 0 and ydiff2/xdiff2 < 0) or (ydiff2/xdiff2 > 0 and ydiff1/xdiff1 < 0):
-						# If theres one above and one below
-						if (previous[1] < point[1] < after[1]) or (after[1] < point[1] < previous[1]):
-							rotate = False
-					angle1 = atan(ydiff1 / xdiff1)
-					angle2 = atan(ydiff2 / xdiff2)
-					angle = (angle1 + angle2) / 2
-
-			else: angle = pi/2
-
-			x1 = cos(angle + pi*0.5 if rotate else angle)      * width + point[0]
-			y1 = sin(angle + pi*0.5 if rotate else angle)      * width + point[1]
-			x2 = cos(angle + pi*1.5 if rotate else angle + pi) * width + point[0]
-			y2 = sin(angle + pi*1.5 if rotate else angle + pi) * width + point[1]
-
-			edges.append(((x1, y1), (x2, y2)))
-
-		for i, edge in enumerate(edges):
-			quad = sortQuad(
-				(edges[i][0][0],   edges[i][0][1]  ),
-				(edges[i][1][0],   edges[i][1][1]  ),
-				(edges[i-1][1][0], edges[i-1][1][1]),
-				(edges[i-1][0][0], edges[i-1][0][1]),
-			)
-			vertices = []
-			for vertex in quad:
-				vertices.append(
-					Vector(vertex[0]/100, altitude, vertex[1]/100)
+			# Edges used by the road
+			edges["road"].append(
+				rotate2dLine(
+					(
+						(point.x - roadWidth/2, point.y),
+						(point.x + roadWidth/2, point.y)
+					),
+					angle,
+					origin = (point.x, point.y)
 				)
-			polygons.append(Polygon(canvas, *vertices, fill = "#666" if i % 2 == 0 else "#555"))
+			)
+			# Edges used by the bumper
+			edges["bumper-left"].append(
+				rotate2dLine(
+					(
+						(point.x - roadWidth/2, point.y),
+						(point.x - roadWidth/2 - bumperWidth, point.y)
+					),
+					angle,
+					origin = (point.x, point.y)
+				)
+			)
+			edges["bumper-right"].append(
+				rotate2dLine(
+					(
+						(point.x + roadWidth/2, point.y),
+						(point.x + roadWidth/2 + bumperWidth, point.y)
+					),
+					angle,
+					origin = (point.x, point.y)
+				)
+			)
+
+		# Generate polygons using edges
+		polygons = []
+		# Road polygons
+		for i, edge in enumerate(edges["road"]):
+			polygons.append(Polygon(
+				canvas,
+				Vector(edges["road"][i][0][0],   altitude, edges["road"][i][0][1]),
+				Vector(edges["road"][i][1][0],   altitude, edges["road"][i][1][1]),
+				Vector(edges["road"][i-1][1][0], altitude, edges["road"][i-1][1][1]),
+				Vector(edges["road"][i-1][0][0], altitude, edges["road"][i-1][0][1]),
+				fill = "#666" if i % 2 == 0 else "#555"
+			))
+		for i, edge in enumerate(edges["bumper-left"]):
+			polygons.append(Polygon(
+				canvas,
+				Vector(edges["bumper-left"][i][0][0],   altitude, edges["bumper-left"][i][0][1]),
+				Vector(edges["bumper-left"][i][1][0],   altitude, edges["bumper-left"][i][1][1]),
+				Vector(edges["bumper-left"][i-1][1][0], altitude, edges["bumper-left"][i-1][1][1]),
+				Vector(edges["bumper-left"][i-1][0][0], altitude, edges["bumper-left"][i-1][0][1]),
+				fill = "#c00" if i % 2 == 0 else "#ccc"
+			))
+		for i, edge in enumerate(edges["bumper-right"]):
+			polygons.append(Polygon(
+				canvas,
+				Vector(edges["bumper-right"][i][0][0],   altitude, edges["bumper-right"][i][0][1]),
+				Vector(edges["bumper-right"][i][1][0],   altitude, edges["bumper-right"][i][1][1]),
+				Vector(edges["bumper-right"][i-1][1][0], altitude, edges["bumper-right"][i-1][1][1]),
+				Vector(edges["bumper-right"][i-1][0][0], altitude, edges["bumper-right"][i-1][0][1]),
+				fill = "#c00" if i % 2 == 0 else "#ccc"
+			))
 
 		super().__init__(*polygons)
