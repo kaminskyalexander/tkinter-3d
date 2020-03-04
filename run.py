@@ -2,6 +2,7 @@ from game.setup import *
 from core.inputs import InputListener
 from game.geometry import rotate, flip, rotationMatrix
 from game.world import World, Racetrack, Polygon
+from game.cube import Cube
 
 inputs = InputListener(root)
 debug = True
@@ -9,63 +10,7 @@ debug = True
 with open("Track.json", "r") as f:
 	world = Racetrack(canvas, loads(f.read()))
 
-# # Cube
-# world = World(
-# 	# Bottom
-# 	Polygon(
-# 		canvas,
-# 		Vector(-1, -1, -1),
-# 		Vector( 1, -1, -1),
-# 		Vector( 1, -1,  1),
-# 		Vector(-1, -1,  1),
-# 		fill = "#f0f"
-# 	),
-# 	# Front
-# 	Polygon(
-# 		canvas,
-# 		Vector(-1,  1, -1),
-# 		Vector(-1, -1, -1),
-# 		Vector( 1, -1, -1),
-# 		Vector( 1,  1, -1),
-# 		fill = "#f00"
-# 	),
-# 	# Left
-# 	Polygon(
-# 		canvas,
-# 		Vector(-1,  1, -1),
-# 		Vector(-1, -1, -1),
-# 		Vector(-1, -1,  1),
-# 		Vector(-1,  1,  1),
-# 		fill = "#ff0"
-# 	),
-# 	# Right
-# 	Polygon(
-# 		canvas,
-# 		Vector( 1,  1, -1),
-# 		Vector( 1, -1, -1),
-# 		Vector( 1, -1,  1),
-# 		Vector( 1,  1,  1),
-# 		fill = "#0f0"
-# 	),
-# 	# Back
-# 	Polygon(
-# 		canvas,
-# 		Vector(-1,  1,  1),
-# 		Vector(-1, -1,  1),
-# 		Vector( 1, -1,  1),
-# 		Vector( 1,  1,  1),
-# 		fill = "#0ff"
-# 	),
-# 	# Top
-# 	Polygon(
-# 		canvas,
-# 		Vector(-1,  1, -1),
-# 		Vector( 1,  1, -1),
-# 		Vector( 1,  1,  1),
-# 		Vector(-1,  1,  1),
-# 		fill = "#00f"
-# 	),
-# )
+#world = Cube()
 
 def update():
 	global camera, rotation, offset
@@ -84,14 +29,14 @@ def update():
 	if inputs.key(*binds["right"]):       movement.x += 0.1
 	if inputs.key(*binds["down"]):        movement.y -= 0.1
 	if inputs.key(*binds["up"]):          movement.y += 0.1
-     
+
 	if inputs.key(*binds["look-up"]):       rotation.x -= 2
 	if inputs.key(*binds["look-down"]):     rotation.x += 2
 	if inputs.key(*binds["look-left"]):     rotation.y -= 2
 	if inputs.key(*binds["look-right"]):    rotation.y += 2
 	if inputs.key(*binds["tilt-left"]):     rotation.z += 2
 	if inputs.key(*binds["tilt-right"]):    rotation.z -= 2
-		
+
 	if inputs.key(*binds["camoffset-up"]):    offset.y += 5
 	if inputs.key(*binds["camoffset-down"]):  offset.y -= 5
 	if inputs.key(*binds["camoffset-left"]):  offset.x += 5
