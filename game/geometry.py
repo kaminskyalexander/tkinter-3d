@@ -5,6 +5,26 @@ def flip(vector):
 	x, y, z = vector.x*-1, vector.y*-1, vector.z*-1
 	return Vector(x, y, z)
 
+# Find the normal of three points
+def findNormal(vector1, vector2, vector3):
+
+	# Find cross product of two sides
+	v = vector2 - vector1
+	w = vector3 - vector1
+	x = (v.y * w.z) - (v.z * w.y)
+	y = (v.z * w.x) - (v.x * w.z)
+	z = (v.x * w.y) - (v.y * w.x)
+
+	return Vector(x, y, z)
+
+def findPolygonNormal(polygon):
+	if len(polygon.vertices[0]) > 2:
+		return findNormal(
+			polygon.vertices[0],
+			polygon.vertices[1],
+			polygon.vertices[2]
+		)
+
 def intersection(a, b, c, d, x1, y1, z1, x2, y2, z2):
 
 	# Solve for T by using "Ax + By + Cz + D = 0" and subbing in the 
