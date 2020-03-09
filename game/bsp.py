@@ -20,7 +20,6 @@ def buildSubtree(polygons):
         a, b, c = normal
         d = -(rootPoly.frame[0].x * a + rootPoly.frame[0].y * b + rootPoly.frame[0].z * c)
 
-
         frontList = []
         backList = []
         for p in polygons:
@@ -57,9 +56,8 @@ def buildSubtree(polygons):
                         splitPolygon[toggle].append(poi)
                         toggle = 1 if not toggle else 0
                         splitPolygon[toggle].append(poi)
-                frontList.append(Polygon(p.canvas, *splitPolygon[0], p.debug, **p.properties))
-                backList.append( Polygon(p.canvas, *splitPolygon[1], p.debug, **p.properties))
+                backList.append( Polygon(p.canvas, *splitPolygon[1], debug = p.debug, **p.properties))
+                frontList.append(Polygon(p.canvas, *splitPolygon[0], debug = p.debug, **p.properties))
         rootNode.front = buildSubtree(frontList)
         rootNode.back = buildSubtree(backList)
         return rootNode
-

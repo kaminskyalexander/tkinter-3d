@@ -14,7 +14,6 @@ class Polygon:
 		for i, vertex in enumerate(vertices):
 			vertices[i] = rotate(vertex - translation, rotation)
 		self.frame = vertices
-		print(self.frame)
 
 	def draw(self):
 		vertices = cull(*self.frame)
