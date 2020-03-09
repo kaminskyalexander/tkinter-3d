@@ -1,12 +1,21 @@
 from game.setup import *
 from game.polygon import Polygon
+from game.bsp import buildSubtree
 from core.util import getNeighbours, sortQuad, angleAverage, find2dLineAngle, rotate2dLine
 
-class World:
+def traverse(tree):
+	treeList = []
+	if tree.front:
+		treeList.extend(traverse(tree.front))
 
-	@staticmethod
-	def painter(polygon):
-		return polygon.distance
+	treeList.append(tree.polygon)
+
+	if tree.back:
+		treeList.extend(traverse(tree.back))
+
+	return treeList
+
+class World:
 
 	def __init__(self, *polygons):
 		self.mesh = list(polygons)
@@ -15,9 +24,8 @@ class World:
 		for polygon in self.mesh:
 			polygon.apply(translation, rotation)
 
-		self.mesh.sort(key = World.painter, reverse = True)
-
-		for polygon in self.mesh:
+		tree = traverse(buildSubtree(self.mesh))
+		for polygon in tree:
 			polygon.draw()
 
 class Racetrack(World):

@@ -14,12 +14,7 @@ class Polygon:
 		for i, vertex in enumerate(vertices):
 			vertices[i] = rotate(vertex - translation, rotation)
 		self.frame = vertices
-
-	# For Painter's Algorithm
-	@property
-	def distance(self):
-		distances = [vertex.z for vertex in self.frame]
-		return sum(distances) / len(distances)
+		print(self.frame)
 
 	def draw(self):
 		vertices = cull(*self.frame)

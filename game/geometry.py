@@ -19,7 +19,7 @@ def findNormal(vector1, vector2, vector3):
 
 
 def findPolygonNormal(polygon):
-	if len(polygon.vertices[0]) > 2:
+	if len(polygon.vertices) > 2:
 		return findNormal(
 			polygon.vertices[0],
 			polygon.vertices[1],

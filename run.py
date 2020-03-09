@@ -10,7 +10,7 @@ debug = True
 with open("Track.json", "r") as f:
 	world = Racetrack(canvas, loads(f.read()))
 
-#world = Cube()
+world = Cube()
 
 def update():
 	global camera, rotation, offset
