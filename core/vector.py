@@ -38,3 +38,6 @@ class Vector:
 
 	def get(self): 
 		return self.x, self.y, self.z
+
+	def __iter__(self):
+		return iter((self.x, self.y, self.z))

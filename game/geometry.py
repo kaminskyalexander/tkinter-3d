@@ -17,6 +17,7 @@ def findNormal(vector1, vector2, vector3):
 
 	return Vector(x, y, z)
 
+
 def findPolygonNormal(polygon):
 	if len(polygon.vertices[0]) > 2:
 		return findNormal(
@@ -24,6 +25,9 @@ def findPolygonNormal(polygon):
 			polygon.vertices[1],
 			polygon.vertices[2]
 		)
+
+def getDotProduct(vector1, vector2):
+	return vector1.x * vector2.x + vector1.y * vector2.y + vector1.z * vector2.z
 
 def intersection(a, b, c, d, x1, y1, z1, x2, y2, z2):
 
