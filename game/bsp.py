@@ -1,5 +1,6 @@
-from game.geometry import getDotProduct, findPolygonNormal, intersection
+from game.geometry import getDotProduct, findNormal, intersection
 from game.polygon import Polygon
+from game.setup import time
 
 class Node:
     def __init__(self, polygon):
@@ -15,7 +16,7 @@ def buildSubtree(polygons):
         rootNode = Node(rootPoly)
 
         # Find normal vector of root polygon 
-        normal = findPolygonNormal(rootPoly)
+        normal = findNormal(*rootPoly.frame[:3])
         # Values for plane equation of root polygon
         a, b, c = normal
         d = -(rootPoly.frame[0].x * a + rootPoly.frame[0].y * b + rootPoly.frame[0].z * c)
@@ -27,11 +28,15 @@ def buildSubtree(polygons):
             sides = []
            # print(p.frame, p.properties)
             for vertex in p.frame:
-                if getDotProduct(normal, (vertex - rootPoly.frame[0])) > 0:
+                dp = getDotProduct(normal, (vertex - rootPoly.frame[0]))
+                if dp > 0:
                     sides.append(1)
-                else:
+                elif dp < 0:
                     sides.append(0)
+                else:
+                    sides.append(None)
             
+            print(sides)
             # In front
             if 1 in sides and not 0 in sides:
                 frontList.append(p)

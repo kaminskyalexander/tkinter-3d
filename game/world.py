@@ -1,17 +1,28 @@
 from game.setup import *
 from game.polygon import Polygon
 from game.bsp import buildSubtree
+from game.geometry import findNormal, getDotProduct
 from core.util import getNeighbours, sortQuad, angleAverage, find2dLineAngle, rotate2dLine
 
 def traverse(tree):
+	normal = findNormal(*tree.polygon.frame[:3])
 	treeList = []
-	if tree.front:
-		treeList.extend(traverse(tree.front))
+	if getDotProduct(normal, (Vector(0, 0, 0) - tree.polygon.frame[0])) > 0:
+		if tree.back:
+			treeList.extend(traverse(tree.back))
 
-	treeList.append(tree.polygon)
+		treeList.append(tree.polygon)
 
-	if tree.back:
-		treeList.extend(traverse(tree.back))
+		if tree.front:
+			treeList.extend(traverse(tree.front))
+	else:
+		if tree.front:
+			treeList.extend(traverse(tree.front))
+
+		treeList.append(tree.polygon)
+
+		if tree.back:
+			treeList.extend(traverse(tree.back))
 
 	return treeList
 
