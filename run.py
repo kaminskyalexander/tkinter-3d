@@ -7,10 +7,29 @@ from game.cube import Cube
 inputs = InputListener(root)
 debug = True
 
-with open("Track.json", "r") as f:
-	world = Racetrack(canvas, loads(f.read()))
+# with open("Track.json", "r") as f:
+# 	world = Racetrack(canvas, loads(f.read()))
 
-world = Cube()
+# world = Cube()
+
+world = World(
+	Polygon(
+		canvas,
+		Vector(-1, -1, 0),
+		Vector( 1, -1, 0),
+		Vector( 1,  1, 0),
+		Vector(-1,  1, 0),
+		fill = "#f0f"
+	),
+	Polygon(
+		canvas,
+		Vector(0, -1, -1),
+		Vector(0, -1,  1),
+		Vector(0,  1,  1),
+		Vector(0,  1, -1),
+		fill = "#0ff"
+	)
+)
 
 def update():
 	global camera, rotation, offset
@@ -83,9 +102,10 @@ Framerate Info:
 				rate,
 				delay
 			),
-			font = ("System", 11, ""),
+			font = ("Consolas", 11, ""),
 			anchor = "nw",
-			tag = ("frame", "debug")
+			tag = ("frame", "debug"),
+			fill = "white"
 		)
 
 	canvas.after(delay,	update)
