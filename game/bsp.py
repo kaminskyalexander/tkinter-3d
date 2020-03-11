@@ -15,7 +15,7 @@ def buildSubtree(polygons):
         polygons.remove(rootPoly)
         rootNode = Node(rootPoly)
 
-        # Find normal vector of root polygon 
+        # Find normal vector of root polygon
         normal = findNormal(*rootPoly.frame[:3])
         # Values for plane equation of root polygon
         a, b, c = normal
@@ -26,17 +26,16 @@ def buildSubtree(polygons):
         for p in polygons:
             # Determines if each vertex is in front of or behind the root polygon
             sides = []
-           # print(p.frame, p.properties)
             for vertex in p.frame:
-                dp = getDotProduct(normal, (vertex - rootPoly.frame[0]))
+                # Fix float imprecision
+                dp = round(getDotProduct(normal, (vertex - rootPoly.frame[0])), 5)
                 if dp > 0:
                     sides.append(1)
                 elif dp < 0:
                     sides.append(0)
                 else:
                     sides.append(None)
-            
-            print(sides)
+
             # In front
             if 1 in sides and not 0 in sides:
                 frontList.append(p)
@@ -49,7 +48,7 @@ def buildSubtree(polygons):
             else:
                 toggle = 0
                 splitPolygon = [[],[]]
-                
+
                 for i, vertex in enumerate(p.frame):
                     before = p.frame[i - 1]
                     # If the edge is not intersecting the plane
@@ -61,8 +60,8 @@ def buildSubtree(polygons):
                         splitPolygon[toggle].append(poi)
                         toggle = 1 if not toggle else 0
                         splitPolygon[toggle].append(poi)
-                backList.append( Polygon(p.canvas, *splitPolygon[0], debug = p.debug, **p.properties))
+                backList.append(Polygon(p.canvas, *splitPolygon[0], debug = p.debug, **p.properties))
                 frontList.append(Polygon(p.canvas, *splitPolygon[1], debug = p.debug, **p.properties))
-        rootNode.front = buildSubtree(frontList)
-        rootNode.back = buildSubtree(backList)
+        if frontList: rootNode.front = buildSubtree(frontList)
+        if backList: rootNode.back = buildSubtree(backList)
         return rootNode
