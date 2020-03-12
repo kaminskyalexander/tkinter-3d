@@ -1,35 +1,37 @@
 from game.setup import *
 from core.inputs import InputListener
 from game.geometry import rotate, flip, rotationMatrix
-from game.world import World, Racetrack, Polygon
+from game.world import World
+from game.polygon import Polygon
+from game.racetrack import Racetrack
 from game.cube import Cube
 
 inputs = InputListener(root)
 debug = True
 
-# with open("Track.json", "r") as f:
-# 	world = Racetrack(canvas, loads(f.read()))
+with open("Track.json", "r") as f:
+	world = Racetrack(canvas, loads(f.read()))
 
-# world = Cube()
+[world.mesh.append(poly) for poly in Cube().mesh]
 
-world = World(
-	Polygon(
-		canvas,
-		Vector(-1, -1, 0),
-		Vector( 1, -1, 0),
-		Vector( 1,  1, 0),
-		Vector(-1,  1, 0),
-		fill = "#f0f"
-	),
-	Polygon(
-		canvas,
-		Vector(0, -1, -1),
-		Vector(0, -1,  1),
-		Vector(0,  1,  1),
-		Vector(0,  1, -1),
-		fill = "#0ff"
-	)
-)
+# world = World(
+# 	Polygon(
+# 		canvas,
+# 		Vector(-1, -1, 0),
+# 		Vector( 1, -1, 0),
+# 		Vector( 1,  1, 0),
+# 		Vector(-1,  1, 0),
+# 		fill = "#f0f"
+# 	),
+# 	Polygon(
+# 		canvas,
+# 		Vector(0, -1, -1),
+# 		Vector(0, -1,  1),
+# 		Vector(0,  1,  1),
+# 		Vector(0,  1, -1),
+# 		fill = "#0ff"
+# 	)
+# )
 
 def update():
 	global camera, rotation, offset
