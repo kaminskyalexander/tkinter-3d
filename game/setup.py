@@ -1,8 +1,10 @@
 import tkinter as tk
+import tkinter.ttk as ttk
 from math import cos, sin, atan, pi
 from time import time, sleep
 from json import loads
 from core.vector import Vector
+from game.debugger import PerformanceDebugger
 
 root = tk.Tk()
 width = 1280
@@ -45,3 +47,13 @@ binds = {
 	# Gameplay ............
 	"reset": (82, "press"),
 }
+
+debug = True
+debugger = PerformanceDebugger(root)
+debugger.register("Total")
+debugger.register("User Input")
+debugger.register("Matrix Calculation")
+debugger.register("Transformation/Rotation")
+debugger.register("BSP Sort")
+debugger.register("Polygon Culling")
+debugger.register("Polygon Drawing")

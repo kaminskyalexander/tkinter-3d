@@ -7,38 +7,20 @@ from game.racetrack import Racetrack
 from game.cube import Cube
 
 inputs = InputListener(root)
-debug = True
 
 with open("Track.json", "r") as f:
 	world = Racetrack(canvas, loads(f.read()))
 
 [world.mesh.append(poly) for poly in Cube().mesh]
 
-# world = World(
-# 	Polygon(
-# 		canvas,
-# 		Vector(-1, -1, 0),
-# 		Vector( 1, -1, 0),
-# 		Vector( 1,  1, 0),
-# 		Vector(-1,  1, 0),
-# 		fill = "#f0f"
-# 	),
-# 	Polygon(
-# 		canvas,
-# 		Vector(0, -1, -1),
-# 		Vector(0, -1,  1),
-# 		Vector(0,  1,  1),
-# 		Vector(0,  1, -1),
-# 		fill = "#0ff"
-# 	)
-# )
-
 def update():
 	global camera, rotation, offset
 
-	start = int(time() * 1000)
+	start = time()
 
 	movement = Vector(0, 0, 0)
+
+	DEBUG_INPUT_TIME = time()
 	inputs.refresh()
 
 	if inputs.key(*binds["forward"]):
@@ -71,13 +53,21 @@ def update():
 	movement = rotate(movement, rotationMatrix(flip(rotation)))
 	camera += movement
 
+	debugger.record("User Input", time() - DEBUG_INPUT_TIME)
+
 	canvas.delete("frame")
 
+	DEBUG_MATRIX_CALC_TIME = time()
 	matrix = rotationMatrix(rotation)
+	debugger.record("Matrix Calculation", time() - DEBUG_MATRIX_CALC_TIME)
+
 	world.draw(camera, matrix)
 
 	canvas.tag_raise("debug")
-	wait = int(time() * 1000) - start
+
+	debugger.record("Total", time() - start)
+
+	wait = int(time() * 1000) - int(start * 1000)
 	rate = 1000 // framerate
 	delay = rate - wait if rate - wait < rate else rate
 	if(delay < 1): delay = 1
@@ -109,6 +99,8 @@ Framerate Info:
 			tag = ("frame", "debug"),
 			fill = "white"
 		)
+
+	debugger.update()
 
 	canvas.after(delay,	update)
 
