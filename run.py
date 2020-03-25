@@ -11,7 +11,7 @@ inputs = InputListener(root)
 with open("Track.json", "r") as f:
 	world = Racetrack(canvas, loads(f.read()))
 
-[world.mesh.append(poly) for poly in Cube().mesh]
+world.extend(Cube())
 
 def update():
 	global camera, rotation, offset
