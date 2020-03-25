@@ -41,15 +41,30 @@
 class InputListener:
 
 	def __init__(self, root):
-
-		self.inputs = {"keys": [], "buttons": [], "motion": (0, 0)}
-		self.queue = []
+		self.listening = True
+		self.reset()
 
 		root.bind("<KeyPress>",      lambda event: self.queue.append(event))
 		root.bind("<KeyRelease>",    lambda event: self.queue.append(event))
 		root.bind("<ButtonPress>",   lambda event: self.queue.append(event))
 		root.bind("<ButtonRelease>", lambda event: self.queue.append(event))
 		root.bind("<Motion>",        lambda event: self.queue.append(event))
+		root.bind("<FocusIn>",       lambda event: self.focus(event))
+		root.bind("<FocusOut>",      lambda event: self.focus(event))
+
+	def focus(self, event):
+		# Focus In
+		if event.type == "9":
+			self.reset()
+			self.listening = True
+		# Focus Out
+		elif event.type == "10":
+			self.reset()
+			self.listening = False
+			
+	def reset(self):
+		self.inputs = {"keys": [], "buttons": [], "motion": (0, 0)}
+		self.queue = []
 
 	@property
 	def keys(self): return self.inputs["keys"]
@@ -78,50 +93,52 @@ class InputListener:
 
 	def refresh(self):
 
-		for key in self.keys:
-			if key[1] == "trigger":
-				self.keys.remove(key)
-			if key[1] == "release":
-				self.keys.remove(key)
+		if self.listening:
 
-		for button in self.buttons:
-			if button[1] == "trigger":
-				self.buttons.remove(button)
-			if button[1] == "release":
-				self.buttons.remove(button)
+			for key in self.keys:
+				if key[1] == "trigger":
+					self.keys.remove(key)
+				if key[1] == "release":
+					self.keys.remove(key)
 
-		for event in self.queue:
+			for button in self.buttons:
+				if button[1] == "trigger":
+					self.buttons.remove(button)
+				if button[1] == "release":
+					self.buttons.remove(button)
 
-			# Key Press
-			if event.type == "2":
-				instance = self.key(event.keycode)
-				if not instance:
-					self.keys.append((event.keycode, "trigger"))
-					self.keys.append((event.keycode, "press"))
+			for event in self.queue:
 
-			# Key Release
-			if event.type == "3":
-				instance = self.key(event.keycode)
-				if instance:
-					self.keys.remove(instance)
-					self.keys.append((event.keycode, "release"))
+				# Key Press
+				if event.type == "2":
+					instance = self.key(event.keycode)
+					if not instance:
+						self.keys.append((event.keycode, "trigger"))
+						self.keys.append((event.keycode, "press"))
 
-			# Mouse Button Press
-			if event.type == "4":
-				instance = self.button(event.num)
-				if not instance:
-					self.buttons.append((event.num, "trigger"))
-					self.buttons.append((event.num, "press"))
+				# Key Release
+				if event.type == "3":
+					instance = self.key(event.keycode)
+					if instance:
+						self.keys.remove(instance)
+						self.keys.append((event.keycode, "release"))
 
-			# Mouse Button Release
-			if event.type == "5":
-				instance = self.button(event.num)
-				if instance:
-					self.buttons.remove(instance)
-					self.buttons.append((event.num, "release"))
+				# Mouse Button Press
+				if event.type == "4":
+					instance = self.button(event.num)
+					if not instance:
+						self.buttons.append((event.num, "trigger"))
+						self.buttons.append((event.num, "press"))
 
-			# Motion
-			if event.type == "6":
-				self.inputs["motion"] = event.x, event.y
-		
-		self.queue.clear()
+				# Mouse Button Release
+				if event.type == "5":
+					instance = self.button(event.num)
+					if instance:
+						self.buttons.remove(instance)
+						self.buttons.append((event.num, "release"))
+
+				# Motion
+				if event.type == "6":
+					self.inputs["motion"] = event.x, event.y
+			
+			self.queue.clear()
