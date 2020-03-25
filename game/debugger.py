@@ -1,4 +1,4 @@
-from game.setup import tk, ttk
+from game.setup import tk, ttk, time
 
 class PerformanceDebugger:
 
@@ -26,11 +26,23 @@ class PerformanceDebugger:
 		def disable(): pass
 		self.toplevel.protocol("WM_DELETE_WINDOW", disable)
 
-	def register(self, action):
-		self.entries[action] = {
-			"history": [],
-			"row": self.tree.insert("", 0, text = action, values = ("???", "???"))
-		}
+	def start(self, action):
+		if action not in self.entries:
+			self.entries[action] = {
+				"start": None,
+				"total": 0,
+				"history": [],
+				"row": self.tree.insert("", 0, text = action, values = ("???", "???"))
+			}
+		self.entries[action]["start"] = time()
+
+	def pause(self, action):
+		self.entries[action]["total"] += time() - self.entries[action]["start"]
+
+	def stop(self, action):
+		self.pause(action)
+		self.record(action, self.entries[action]["total"])
+		self.entries[action]["total"] = 0
 
 	def record(self, action, time):
 		time = round(time * 1000, 3)

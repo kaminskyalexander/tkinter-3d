@@ -50,10 +50,3 @@ binds = {
 
 debug = True
 debugger = PerformanceDebugger(root)
-debugger.register("Total")
-debugger.register("User Input")
-debugger.register("Matrix Calculation")
-debugger.register("Transformation/Rotation")
-debugger.register("BSP Sort")
-debugger.register("Polygon Culling")
-debugger.register("Polygon Drawing")

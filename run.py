@@ -16,11 +16,12 @@ world.extend(Cube())
 def update():
 	global camera, rotation, offset
 
+	debugger.start("Total")
 	start = time()
 
 	movement = Vector(0, 0, 0)
 
-	DEBUG_INPUT_TIME = time()
+	debugger.start("User Input")
 	inputs.refresh()
 
 	if inputs.key(*binds["forward"]):
@@ -53,19 +54,19 @@ def update():
 	movement = rotate(movement, rotationMatrix(flip(rotation)))
 	camera += movement
 
-	debugger.record("User Input", time() - DEBUG_INPUT_TIME)
+	debugger.stop("User Input")
 
 	canvas.delete("frame")
 
-	DEBUG_MATRIX_CALC_TIME = time()
+	debugger.start("Matrix Calculation")
 	matrix = rotationMatrix(rotation)
-	debugger.record("Matrix Calculation", time() - DEBUG_MATRIX_CALC_TIME)
+	debugger.stop("Matrix Calculation")
 
 	world.draw(camera, matrix)
 
 	canvas.tag_raise("debug")
 
-	debugger.record("Total", time() - start)
+	debugger.stop("Total")
 
 	wait = int(time() * 1000) - int(start * 1000)
 	rate = 1000 // framerate

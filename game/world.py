@@ -15,11 +15,9 @@ class World:
 
 	def draw(self, translation, rotation):
 
-		DEBUG_BSP_SORT_TIME = time()
+		debugger.start("BSP Traversal")
 		order = traverse(self.tree)
-		debugger.record("BSP Sort", time() - DEBUG_BSP_SORT_TIME)
-
-		import game.polygon
+		debugger.stop("BSP Traversal")
 		
 		for polygon in order:
 			# TODO: Small issue --> BSP traversal is always one frame behind
@@ -27,7 +25,6 @@ class World:
 			polygon.apply(translation, rotation)
 			polygon.draw()
 
-		debugger.record("Polygon Culling", game.polygon.DEBUG_POLY_CULL_TIME)
-		debugger.record("Polygon Drawing", game.polygon.DEBUG_POLY_DRAW_TIME)
-		game.polygon.DEBUG_POLY_CULL_TIME = 0
-		game.polygon.DEBUG_POLY_DRAW_TIME = 0
+		debugger.stop("Polygon Transformation")
+		debugger.stop("Polygon Culling")
+		debugger.stop("Polygon Drawing")
