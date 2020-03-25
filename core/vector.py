@@ -64,6 +64,13 @@ class Vector:
 	def __neg__(self):
 		return self * -1
 
+	def __abs__(self):
+		return Vector(
+			abs(self.x),
+			abs(self.y),
+			abs(self.z)
+		)
+
 	def __str__(self):
 		return "({}, {}, {})".format(self.x, self.y, self.z)
 
