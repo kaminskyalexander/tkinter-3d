@@ -19,11 +19,11 @@ def findNormal(vector1, vector2, vector3):
 
 
 def findPolygonNormal(polygon):
-	if len(polygon.vertices) > 2:
+	if len(polygon.frame) > 2:
 		return findNormal(
-			polygon.vertices[0],
-			polygon.vertices[1],
-			polygon.vertices[2]
+			polygon.frame[0],
+			polygon.frame[1],
+			polygon.frame[2]
 		)
 
 def getDotProduct(vector1, vector2):

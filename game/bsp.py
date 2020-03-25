@@ -65,26 +65,3 @@ def buildSubtree(polygons):
 		if frontList: rootNode.front = buildSubtree(frontList)
 		if backList: rootNode.back = buildSubtree(backList)
 		return rootNode
-
-def traverse(tree):
-	normal = findNormal(*tree.polygon.frame[:3])
-	treeList = []
-	
-	if getDotProduct(normal, Vector(0, 0, 0) - tree.polygon.frame[0]) > 0:
-		if tree.back:
-			treeList.extend(traverse(tree.back))
-
-		treeList.append(tree.polygon)
-
-		if tree.front:
-			treeList.extend(traverse(tree.front))
-	else:
-		if tree.front:
-			treeList.extend(traverse(tree.front))
-
-		treeList.append(tree.polygon)
-
-		if tree.back:
-			treeList.extend(traverse(tree.back))
-
-	return treeList

@@ -63,6 +63,9 @@ def update():
 	debugger.stop("Matrix Calculation")
 
 	world.draw(camera, matrix)
+	debugger.stop("Polygon Transformation")
+	debugger.stop("Polygon Culling")
+	debugger.stop("Polygon Drawing")
 
 	canvas.tag_raise("debug")
 

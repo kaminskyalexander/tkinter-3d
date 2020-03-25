@@ -1,6 +1,6 @@
 from game.setup import *
-from game.bsp import buildSubtree, traverse
-from game.geometry import findNormal, getDotProduct
+from game.bsp import buildSubtree
+from game.geometry import findPolygonNormal, getDotProduct
 from core.util import getNeighbours, sortQuad, angleAverage, find2dLineAngle, rotate2dLine
 
 class World:
@@ -13,18 +13,18 @@ class World:
 		self.mesh.extend(world.mesh)
 		self.tree = buildSubtree(self.mesh)
 
-	def draw(self, translation, rotation):
+	def draw(self, translation, rotation, tree = None):
+		if tree == None: tree = self.tree
 
-		debugger.start("BSP Traversal")
-		order = traverse(self.tree)
-		debugger.stop("BSP Traversal")
-		
-		for polygon in order:
-			# TODO: Small issue --> BSP traversal is always one frame behind
-			# We need to apply transformation and rotation before or during the traversal
-			polygon.apply(translation, rotation)
-			polygon.draw()
+		tree.polygon.apply(translation, rotation)
+		normal = findPolygonNormal(tree.polygon)
+		direction = round(getDotProduct(normal, Vector(0, 0, 0) - tree.polygon.frame[0]), 5)
 
-		debugger.stop("Polygon Transformation")
-		debugger.stop("Polygon Culling")
-		debugger.stop("Polygon Drawing")
+		if direction > 0:
+			if tree.back: self.draw(translation, rotation, tree.back)
+			tree.polygon.draw()
+			if tree.front: self.draw(translation, rotation, tree.front)
+		else:
+			if tree.front: self.draw(translation, rotation, tree.front)
+			tree.polygon.draw()
+			if tree.back: self.draw(translation, rotation, tree.back)
