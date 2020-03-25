@@ -65,7 +65,9 @@ def update():
 	matrix = rotationMatrix(rotation)
 	debugger.stop("Matrix Calculation")
 
+	debugger.start("World Drawing")
 	world.draw(camera, matrix)
+	debugger.stop("World Drawing")
 	debugger.stop("Polygon Transformation")
 	debugger.stop("Polygon Culling")
 	debugger.stop("Polygon Drawing")
