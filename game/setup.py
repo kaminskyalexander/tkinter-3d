@@ -24,7 +24,11 @@ canvas = tk.Canvas(
 canvas.pack(fill = "both", expand = True)
 
 binds = {
-	# Movement ............
+	# Modifiers .......................
+	"shift": (16, "press"),
+	"ctrl": (17, "press"),
+	"alt": (18, "press"),
+	# Movement ........................
 	"forward": (87, "press"),
 	"backward": (83, "press"),
 	"up": (32, "press"),
@@ -32,21 +36,25 @@ binds = {
 	"speed": (16, "press"),
 	"left": (81, "press"),
 	"right": (69, "press"),
-	# Camera Direction ....
+	# Camera Direction ................
 	"look-left": (65, "press"),
 	"look-right": (68, "press"),
 	"look-up": (38, "press"),
 	"look-down": (40, "press"),
 	"tilt-left": (37, "press"),
 	"tilt-right": (39, "press"),
-	# Camera Offset .......
+	# Gameplay ........................
+	"reset": (82, "press"),
+	# Debug ...........................
 	"camoffset-left": (70, "press"),
 	"camoffset-right": (72, "press"),
 	"camoffset-up": (84, "press"),
 	"camoffset-down": (71, "press"),
-	# Gameplay ............
-	"reset": (82, "press"),
+	"performance": (80, "trigger")
 }
 
 debug = True
 debugger = PerformanceDebugger(root)
+
+# Force show the window
+root.focus_force()

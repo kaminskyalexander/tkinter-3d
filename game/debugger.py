@@ -3,6 +3,7 @@ from game.setup import tk, ttk, time
 class PerformanceDebugger:
 
 	def __init__(self, root):
+		self.enabled = False
 
 		# Create new window
 		self.toplevel = tk.Toplevel(root)
@@ -10,6 +11,9 @@ class PerformanceDebugger:
 
 		# Initialize the treeview widget
 		self.tree = ttk.Treeview(self.toplevel, columns = ("latest", "average"))
+
+		# Hide the window by default
+		self.toplevel.withdraw()
 
 		# Add headings to the columns
 		self.tree.heading("#0", text = "Action")
@@ -22,9 +26,18 @@ class PerformanceDebugger:
 		# Dictionary for storing entries
 		self.entries = {}
 
-		# Prevent the window from being closed
-		def disable(): pass
-		self.toplevel.protocol("WM_DELETE_WINDOW", disable)
+		# If the window is closed
+		self.toplevel.protocol("WM_DELETE_WINDOW", self.toggle)
+
+	def toggle(self):
+		# Flip the variable
+		self.enabled = not self.enabled
+		if self.enabled:
+			# Show the window
+			self.toplevel.deiconify()
+		else:
+			# Hide the window
+			self.toplevel.withdraw()
 
 	def start(self, action):
 		if action not in self.entries:

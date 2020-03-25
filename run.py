@@ -51,6 +51,9 @@ def update():
 		rotation = Vector(0, 0, 0)
 		offset = Vector(0, 0, 0)
 
+	if inputs.key(*binds["performance"]):
+		debugger.toggle()
+
 	movement = rotate(movement, rotationMatrix(flip(rotation)))
 	camera += movement
 
