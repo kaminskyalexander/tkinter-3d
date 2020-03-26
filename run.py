@@ -11,20 +11,42 @@ inputs = InputListener(root)
 # with open("Track.json", "r") as f:
 # 	world = Racetrack(canvas, loads(f.read()))
 
-# world = World(
-# 	Polygon(
-# 		canvas,
-# 		Vector(-1, -1, 0),
-# 		Vector( 1, -1, 0),
-# 		Vector( 1,  1, 0),
-# 		Vector(-1,  1, 0),
-# 		fill = "red"
-# 	)
-# )
+world = World(
+	Polygon(
+		canvas,
+		Vector(3, -1, 0),
+		Vector(5, -1, 0),
+		Vector(5,  1, 0),
+		Vector(3,  1, 0),
+		fill = "#808080"
+	)
+)
 
-# world.extend(Cube())
+world.extend(World(
+	Polygon(
+		canvas,
+		Vector(0, -1, -3),
+		Vector(0, -1, -5),
+		Vector(0,  1, -5),
+		Vector(0,  1, -3),
+		fill = "#808080"
+	)
+))
 
-world = Cube()
+world.extend(World(
+	Polygon(
+		canvas,
+		Vector(-1, 0, 3),
+		Vector(-1, 0, 5),
+		Vector( 1, 0, 5),
+		Vector( 1, 0, 3),
+		fill = "#808080"
+	)
+))
+
+world.extend(Cube())
+
+# world = Cube()
 
 def update():
 	global camera, rotation, offset
