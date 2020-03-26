@@ -8,6 +8,7 @@ class Polygon:
 		self.vertices = list(args)
 		self.frame = self.vertices
 		self.debug = debug
+		self.color = kwargs["fill"]
 		self.properties = kwargs
 
 	def apply(self, translation, rotation):
