@@ -28,7 +28,7 @@ def buildSubtree(polygons):
 			sides = []
 			for vertex in p.vertices:
 				# Fix float imprecision
-				dp = round(getDotProduct(normal, (vertex - rootPoly.vertices[0])), 5)
+				dp = getDotProduct(normal, (vertex - rootPoly.vertices[0]))
 				if dp > 0:
 					sides.append(1)
 				elif dp < 0:
@@ -60,8 +60,8 @@ def buildSubtree(polygons):
 						splitPolygon[toggle].append(poi)
 						toggle = 1 if not toggle else 0
 						splitPolygon[toggle].append(poi)
-				if splitPolygon[0]: backList.append(Polygon(p.canvas, *splitPolygon[0], debug = p.debug, **p.properties))
-				if splitPolygon[1]: frontList.append(Polygon(p.canvas, *splitPolygon[1], debug = p.debug, **p.properties))
+				if splitPolygon[0]: frontList.append(Polygon(p.canvas, *splitPolygon[0], debug = p.debug, **p.properties))
+				if splitPolygon[1]: backList.append(Polygon(p.canvas, *splitPolygon[1], debug = p.debug, **p.properties))
 		if frontList: rootNode.front = buildSubtree(frontList)
 		if backList: rootNode.back = buildSubtree(backList)
 		return rootNode
