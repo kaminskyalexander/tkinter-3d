@@ -9,7 +9,7 @@ class World:
 	def __init__(self, *polygons):
 		self.mesh = list(polygons)
 		self.tree = buildSubtree(self.mesh)
-		self.light = Light(Vector(0, 0, 0))
+		self.light = Light(Vector(5, 10, -2))
 
 	def extend(self, world):
 		self.mesh.extend(world.mesh)
@@ -18,13 +18,15 @@ class World:
 	def draw(self, translation, rotation, tree = None):
 		if tree == None: tree = self.tree
 
+		# BUG Light is being translated/rotated more than necessary
+		self.light.apply(translation, rotation)
 		tree.polygon.apply(translation, rotation)
 		normal = normalize(findPolygonNormal(tree.polygon))
 
 		center = vectorSum(tree.polygon.frame) / len(tree.polygon.frame)
 		direction = getDotProduct(normal, Vector(0, 0, 0) - tree.polygon.frame[0])
 
-		lightDirection = normalize(self.light.position - center)
+		lightDirection = normalize(self.light.frame - center)
 
 		intensity = getDotProduct(normal, lightDirection)
 		intensity = max(0, intensity) if direction > 0 else max(0, -intensity)
@@ -39,6 +41,3 @@ class World:
 			if tree.front: self.draw(translation, rotation, tree.front)
 			tree.polygon.draw()
 			if tree.back: self.draw(translation, rotation, tree.back)
-
-# https://www.scratchapixel.com/lessons/3d-basic-rendering/introduction-to-shading/diffuse-lambertian-shading
-# https://www.davrous.com/2013/07/03/tutorial-part-5-learning-how-to-write-a-3d-software-engine-in-c-ts-or-js-flat-gouraud-shading/
