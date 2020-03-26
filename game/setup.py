@@ -1,6 +1,6 @@
 import tkinter as tk
 import tkinter.ttk as ttk
-from math import cos, sin, atan, pi
+from math import cos, sin, atan, pi, sqrt
 from time import time, sleep
 from json import loads
 from core.vector import Vector

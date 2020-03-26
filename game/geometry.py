@@ -17,7 +17,6 @@ def findNormal(vector1, vector2, vector3):
 
 	return Vector(x, y, z)
 
-
 def findPolygonNormal(polygon):
 	if len(polygon.frame) > 2:
 		return findNormal(
@@ -26,8 +25,20 @@ def findPolygonNormal(polygon):
 			polygon.frame[2]
 		)
 
+# Returns on a scale from -1 to 1
 def getDotProduct(vector1, vector2):
-	return vector1.x * vector2.x + vector1.y * vector2.y + vector1.z * vector2.z
+	return round(sum(vector1 * vector2), 5)
+
+def normalize(vector):
+	length = sqrt(vector.x**2 + vector.y**2 + vector.z**2)
+	if length == 0: return vector
+	else: return vector / length
+
+def vectorSum(vectors):
+	result = Vector(0, 0, 0)
+	for vector in vectors:
+		result += vector
+	return result
 
 def intersection(a, b, c, d, x1, y1, z1, x2, y2, z2):
 
@@ -147,8 +158,8 @@ def cull(*args):
 						new.append(
 							intersection(
 								*planes[direction], 
-								*vertices[i].get(),
-								*neighbour.get()
+								*vertices[i],
+								*neighbour
 							)
 						)
 			else: new.append(vertices[i])

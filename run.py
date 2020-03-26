@@ -8,10 +8,23 @@ from game.cube import Cube
 
 inputs = InputListener(root)
 
-with open("Track.json", "r") as f:
-	world = Racetrack(canvas, loads(f.read()))
+# with open("Track.json", "r") as f:
+# 	world = Racetrack(canvas, loads(f.read()))
 
-world.extend(Cube())
+# world = World(
+# 	Polygon(
+# 		canvas,
+# 		Vector(-1, -1, 0),
+# 		Vector( 1, -1, 0),
+# 		Vector( 1,  1, 0),
+# 		Vector(-1,  1, 0),
+# 		fill = "red"
+# 	)
+# )
+
+# world.extend(Cube())
+
+world = Cube()
 
 def update():
 	global camera, rotation, offset
