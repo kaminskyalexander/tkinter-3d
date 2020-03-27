@@ -11,6 +11,7 @@ class World:
 		self.mesh = list(polygons)
 		self.tree = buildSubtree(self.mesh)
 		self.light = Light(Vector(-6, 4, -5))
+		self.drawingMode = 0
 
 	def extend(self, world):
 		self.mesh.extend(world.mesh)
@@ -36,9 +37,9 @@ class World:
 
 		if direction > 0:
 			if tree.back: self.draw(translation, rotation, tree.back)
-			tree.polygon.draw()
+			tree.polygon.draw(mode = self.drawingMode)
 			if tree.front: self.draw(translation, rotation, tree.front)
 		else:
 			if tree.front: self.draw(translation, rotation, tree.front)
-			tree.polygon.draw()
+			tree.polygon.draw(mode = self.drawingMode)
 			if tree.back: self.draw(translation, rotation, tree.back)

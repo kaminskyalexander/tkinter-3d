@@ -19,17 +19,27 @@ class Polygon:
 		self.frame = vertices
 		debugger.pause("Polygon Transformation")
 
-	def draw(self):
+	def draw(self, mode = 0):
 		debugger.start("Polygon Culling")
 		vertices = cull(*self.frame)
 		debugger.pause("Polygon Culling")
 
 		debugger.start("Polygon Drawing")
 		if vertices:
-			self.canvas.create_polygon(
-				[pointToPixel(flatten(vertex)) for vertex in vertices],
-				self.properties,
-				tag = "frame"
-			)
+			if mode == 0:
+				self.canvas.create_polygon(
+					[pointToPixel(flatten(vertex)) for vertex in vertices],
+					self.properties,
+					tag = "frame"
+				)
+			elif mode == 1:
+				for i, vertex in enumerate(vertices):
+					previous = vertices[i-1]
+					self.canvas.create_line(
+						pointToPixel(flatten(previous)),
+						pointToPixel(flatten(vertex)),
+						fill = "#0f0",
+						tag = "frame"
+					)
 		debugger.pause("Polygon Drawing")
 				

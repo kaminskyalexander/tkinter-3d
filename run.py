@@ -81,6 +81,9 @@ def update():
 	if inputs.key(*binds["camoffset-left"]):  offset.x += 5
 	if inputs.key(*binds["camoffset-right"]): offset.x -= 5
 
+	if inputs.key(*binds["f1"]):      world.drawingMode = 0
+	if inputs.key(*binds["f2"]):      world.drawingMode = 1
+
 	if inputs.key(*binds["reset"]):
 		camera = Vector(0, 0, 0)
 		rotation = Vector(0, 0, 0)
@@ -111,32 +114,27 @@ def update():
 
 	debugger.stop("Total")
 
-	wait = int(time() * 1000) - int(start * 1000)
+	wait = time() * 1000 - start * 1000
 	rate = 1000 // framerate
-	delay = rate - wait if rate - wait < rate else rate
+	delay = int(rate - wait if rate - wait < rate else rate)
 	if(delay < 1): delay = 1
 
 	if(debug):
 		canvas.create_text(
 			10, 10,
 			text = """\
-Tkinter 3D Racetrack Test
+Tkinter 3D Rendering [{}fps]
+F1 for default rendering...
+F2 for wireframe rendering...
+ALT+P for performance debugging...
 XYZ: {} / {} / {}
 Rotation: {} / {} / {}
 Offset: {} / {} / {}
-Framerate Info:
-   Configured FPS: {}
-   Wait: {}
-   Rate: {}
-   Delay: {}\
 """.format(
-				camera.x, camera.y, camera.z,
-				rotation.x, rotation.y,	rotation.z,
-				offset.x, offset.y, offset.z,
-				framerate,
-				wait,
-				rate,
-				delay
+				int(1000/wait),
+				*(round(value, 2) for value in camera),
+				*(round(value, 2) for value in rotation),
+				*(round(value, 2) for value in offset)
 			),
 			font = ("Consolas", 11, ""),
 			anchor = "nw",
