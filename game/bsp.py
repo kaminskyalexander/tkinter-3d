@@ -27,8 +27,7 @@ def buildSubtree(polygons):
 			# Determines if each vertex is in front of or behind the root polygon
 			sides = []
 			for vertex in p.vertices:
-				# Fix float imprecision
-				dp = getDotProduct(normal, (vertex - rootPoly.vertices[0]))
+				dp = Vector.dot(normal, (vertex - rootPoly.vertices[0]))
 				if dp > 0:
 					sides.append(1)
 				elif dp < 0:
@@ -61,7 +60,7 @@ def buildSubtree(polygons):
 						toggle = 1 if not toggle else 0
 						splitPolygon[toggle].append(poi)
 				# Check which direction the part of split polygon is on (determine the order)
-				if getDotProduct(normal, (splitPolygon[0][0] - rootPoly.vertices[0])) > 0:
+				if Vector.dot(normal, (splitPolygon[0][0] - rootPoly.vertices[0])) > 0:
 					if splitPolygon[0]: frontList.append(Polygon(p.canvas, *splitPolygon[0], debug = p.debug, **p.properties))
 					if splitPolygon[1]: backList.append(Polygon(p.canvas, *splitPolygon[1], debug = p.debug, **p.properties))
 				else:

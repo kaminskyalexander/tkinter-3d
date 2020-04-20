@@ -23,14 +23,15 @@ class World:
 		# BUG Light is being translated/rotated more than necessary
 		self.light.apply(translation, rotation)
 		tree.polygon.apply(translation, rotation)
-		normal = normalize(findPolygonNormal(tree.polygon))
+		normal = findPolygonNormal(tree.polygon).normalized
 
 		center = vectorSum(tree.polygon.frame) / len(tree.polygon.frame)
-		direction = getDotProduct(normal, Vector(0, 0, 0) - tree.polygon.frame[0])
+		direction = Vector.dot(normal, Vector(0, 0, 0) - tree.polygon.frame[0])
 
-		lightDirection = normalize(self.light.frame - center)
+		lightDirection = self.light.frame - center
+		lightDirection.normalize()
 
-		intensity = getDotProduct(normal, lightDirection)
+		intensity = Vector.dot(normal, lightDirection)
 		intensity = max(0, intensity) if direction > 0 else max(0, -intensity)
 
 		tree.polygon.properties["fill"] = brightenHexColor(tree.polygon.color, intensity*100-80)

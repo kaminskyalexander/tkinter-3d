@@ -92,7 +92,7 @@ def update():
 	if inputs.key(*binds["performance"]):
 		debugger.toggle()
 
-	movement = rotate(movement, rotationMatrix(flip(rotation)))
+	movement = rotate(movement, rotationMatrix(-rotation))
 	camera += movement
 
 	debugger.stop("User Input")
