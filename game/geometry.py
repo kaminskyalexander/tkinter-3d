@@ -2,20 +2,16 @@ from game.setup import *
 from core.util import getNeighbours
 
 def flip(vector):
+	raise DeprecationWarning("Use (-Vector) or (Vector * -1)")
 	x, y, z = vector.x*-1, vector.y*-1, vector.z*-1
 	return Vector(x, y, z)
 
 # Find the normal of three points
 def findNormal(vector1, vector2, vector3):
-
 	# Find cross product of two sides
 	v = vector2 - vector1
-	w = vector3 - vector1
-	x = (v.y * w.z) - (v.z * w.y)
-	y = (v.z * w.x) - (v.x * w.z)
-	z = (v.x * w.y) - (v.y * w.x)
-
-	return Vector(x, y, z)
+	w = vector3 - vector2
+	return Vector.cross(v, w)
 
 def findPolygonNormal(polygon):
 	if len(polygon.frame) > 2:
@@ -25,11 +21,12 @@ def findPolygonNormal(polygon):
 			polygon.frame[2]
 		)
 
-# Returns on a scale from -1 to 1
 def getDotProduct(vector1, vector2):
+	raise DeprecationWarning("Moved to Vector.dot() staticmethod")
 	return round(sum(vector1 * vector2), 5)
 
 def normalize(vector):
+	raise DeprecationWarning("DEPRECATED: Use Vector.normalized or Vector.normalize()")
 	length = sqrt(vector.x**2 + vector.y**2 + vector.z**2)
 	if length == 0: return vector
 	else: return vector / length
@@ -174,6 +171,7 @@ def cull(*args):
 # to the shape as keyword arguments in the same format
 # as Tkinter's canvas.create_polygon()
 def polygon(camera, rotation, *args, debug = False, **kwargs):
+	raise Exception("Unsupported, use game.polygon")
 	args = list(args)
 	
 	# Find the rotation matrix and apply it onto all points
